@@ -1,0 +1,43 @@
+import { getContractBasic } from '@portkey/contracts';
+import { aelf } from '@portkey/utils';
+
+interface IRowTransactionPortkeyParams {
+  caHash: string;
+  privateKey: string;
+  contractAddress: string;
+  caContractAddress: string;
+  rpcUrl: string;
+  params: any;
+  methodName: string;
+}
+
+export const getRawTransactionPortkey = async ({
+  caHash,
+  privateKey,
+  contractAddress,
+  caContractAddress,
+  rpcUrl,
+  params,
+  methodName,
+}: IRowTransactionPortkeyParams) => {
+  try {
+    const contract = await getContractBasic({
+      callType: 'ca',
+      caHash: caHash,
+      account: aelf.getWallet(privateKey),
+      contractAddress: contractAddress,
+      caContractAddress: caContractAddress,
+      rpcUrl: rpcUrl,
+    });
+    console.log('getRawTransaction Portkey caHash', caHash);
+    console.log('getRawTransaction Portkey privateKey', privateKey);
+    console.log('getRawTransaction Portkey contract', contract);
+
+    const a = await contract.encodedTx(methodName, params);
+
+    return a.data;
+  } catch (error) {
+    console.log('getRawTransaction error', error);
+    return Promise.reject(error);
+  }
+};

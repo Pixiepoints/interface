@@ -1,0 +1,11 @@
+
+
+/* stylelint-disable no-descending-specificity */
+.earn-token-list {
+  :global(.aelfd-table-content) {
+    :global(.aelfd-table-cell) {
+        padding: 12px 16px
+      }
+  }
+}
+

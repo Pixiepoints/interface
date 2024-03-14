@@ -1,0 +1,7 @@
+.paragraph {
+  @apply md:text-[16px] md:leading-[24px] font-normal text-[var(--neutral-secondary)] !mb-0;
+}
+
+.richText {
+  @apply text-[14px] leading-[22px] md:text-[16px] md:leading-[24px] font-normal text-[var(--neutral-secondary)] inline;
+}

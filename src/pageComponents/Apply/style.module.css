@@ -1,0 +1,7 @@
+.apply {
+  @apply w-full main:w-[1360px] pt-[48px] px-[40px] pb-[20px] mx-auto max-w-[1360px];
+}
+
+.mobile-apply {
+  @apply !block !pt-[40px] !px-[16px] !pb-[16px];
+}

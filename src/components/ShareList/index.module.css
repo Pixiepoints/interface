@@ -1,0 +1,53 @@
+/* stylelint-disable no-descending-specificity */
+.share-list-svg {
+  @apply w-full flex items-center justify-around;
+  >div {
+    @apply w-full flex flex-col items-center justify-center;
+    .share-card {
+      @apply flex flex-col justify-center items-center cursor-pointer;
+      .share-icon {
+        @apply w-[48px] h-[48px] rounded-[48px] border-solid border border-neutralBorder flex justify-center items-center hover:bg-neutralHoverBg;
+      }
+    }
+    
+  }
+
+  .text {
+    @apply mt-[8px] text-sm md:text-base text-neutralSecondary font-normal; 
+  }
+
+  svg {
+    path {
+      @apply w-[24px] h-[24px];
+    }
+  }
+
+  .share-list-svg-twitter {
+    path {
+      @apply fill-[var(--share-svg-hover)] stroke-[var(--share-svg-hover)];
+    }
+  }
+  .share-list-svg-copy {
+    path {
+      @apply fill-[var(--share-svg-hover)];
+    }
+  }
+  .share-list-svg-telegram {
+    path:first-child {
+      @apply fill-[#28A8E9];
+    }
+  }
+}
+
+.share-list-svg-mobile {
+  svg {
+    @apply w-[16px] h-[16px];
+  }
+  >div {
+    .share-card {
+      .share-icon {
+        @apply w-[32px] h-[32px];
+      }
+    }
+  }
+}

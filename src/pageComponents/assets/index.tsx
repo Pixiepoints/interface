@@ -1,0 +1,49 @@
+'use client';
+
+import { useRouter } from 'next/navigation';
+import { useEffect } from 'react';
+import { WalletType, useWebLogin, useComponentFlex } from 'aelf-web-login';
+import { LeftOutlined } from '@ant-design/icons';
+
+import styles from './style.module.css';
+import { useWalletService } from 'hooks/useWallet';
+import { assetsConfig } from './config';
+// import { useSelector } from 'redux/store';
+
+export default function MyAsset() {
+  const router = useRouter();
+  const { wallet, walletType, login } = useWebLogin();
+  const { isLogin } = useWalletService();
+
+  // const info = useSelector((store) => store.elfInfo.elfInfo);
+
+  // const { isShowRampBuy, isShowRampSell } = info;
+
+  const { PortkeyAssetProvider, Asset } = useComponentFlex();
+
+  useEffect(() => {
+    if (!isLogin) {
+      login();
+    } else if (walletType !== WalletType.portkey) {
+      router.push('/');
+    }
+  }, [isLogin, router, walletType]);
+
+  return (
+    <div className={styles.asset}>
+      <PortkeyAssetProvider originChainId={wallet?.portkeyInfo?.chainId as Chain} pin={wallet?.portkeyInfo?.pin}>
+        <Asset
+          // faucet={{
+          //   faucetContractAddress: configInfo?.faucetContractAddress,
+          // }}
+          {...assetsConfig()}
+          backIcon={<LeftOutlined />}
+          onOverviewBack={() => router.back()}
+          onLifeCycleChange={(lifeCycle) => {
+            console.log(lifeCycle, 'onLifeCycleChange');
+          }}
+        />
+      </PortkeyAssetProvider>
+    </div>
+  );
+}

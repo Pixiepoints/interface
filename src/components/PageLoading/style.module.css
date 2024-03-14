@@ -1,0 +1,8 @@
+.loading {
+  @apply !w-max !h-max bg-transparent shadow-none;
+  :global{
+    .aelfd-modal-content {
+      @apply w-max h-max bg-transparent shadow-none;
+    }
+  }
+}

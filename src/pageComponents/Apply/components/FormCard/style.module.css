@@ -1,0 +1,3 @@
+.form-card {
+  @apply w-full border-0 md:border border-neutralBorder border-solid rounded-lg p-0 md:p-[60px];
+}
