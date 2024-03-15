@@ -43,6 +43,7 @@ export interface IPointDetail {
   updateTime: number;
   rate: number;
   followersNumber: number;
+  displayName: string;
 }
 
 export interface IEarnTokenDetailResults {

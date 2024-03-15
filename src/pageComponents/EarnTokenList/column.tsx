@@ -114,11 +114,11 @@ export const columns: (params?: { showShareModal?: (data: IEarnToken) => void })
           <ToolTip title="Points Earned from Customised Link Registration">
             <QuestionIconComp className="w-4 h-4 mr-1 cursor-pointer" width={16} height={16} />
           </ToolTip>
-          <span>XPSGR-3</span>
+          <span>XPSGR-5</span>
         </div>
       ),
-      dataIndex: 'thirdSymbolAmount',
-      key: 'thirdSymbolAmount',
+      dataIndex: 'fiveSymbolAmount',
+      key: 'fiveSymbolAmount',
       sorter: true,
       render: (amount) => {
         const text = BigNumber(amount)
