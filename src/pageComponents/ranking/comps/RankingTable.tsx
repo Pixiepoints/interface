@@ -10,6 +10,7 @@ import { SorterResult } from 'antd/es/table/interface';
 import BigNumber from 'bignumber.js';
 import { formatTokenPrice } from 'utils/format';
 import { OmittedType, addPrefixSuffix, getOmittedStr } from 'utils/addressFormatting';
+import { SGR_5_TOOL_TIP } from 'constants';
 
 interface IDappTableProps {
   dataSource: IRankingData[];
@@ -125,7 +126,7 @@ export function RankingTable({ dataSource, loading, totalCount, onChange, onClic
     {
       title: (
         <div className="flex items-center">
-          <ToolTip title="Points Earned from Customised Link Registration">
+          <ToolTip title={SGR_5_TOOL_TIP}>
             <QuestionIconComp className="w-4 h-4 mr-1 cursor-pointer" width={16} height={16} />
           </ToolTip>
           <span>XPSGR-5</span>
