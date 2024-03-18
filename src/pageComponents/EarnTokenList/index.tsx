@@ -17,7 +17,7 @@ import { useRequest, useTimeout } from 'ahooks';
 import { fetchEarnTokenList } from 'api/rankingApi';
 import { useWebLogin } from 'aelf-web-login';
 import SkeletonImage from 'components/SkeletonImage';
-import { sortType } from 'pageComponents/ranking/contant';
+import { sortType } from 'pageComponents/ranking';
 
 export default function EarnTokenList() {
   const [dappName, setDappName] = useState<string>('');
