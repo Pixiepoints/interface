@@ -14,7 +14,7 @@ import styles from './style.module.css';
 export enum sortType {
   'firstSymbolAmount' = 'FirstSymbolAmount',
   'secondSymbolAmount' = 'SecondSymbolAmount',
-  'thirdSymbolAmount' = 'ThirdSymbolAmount',
+  'fiveSymbolAmount' = 'FiveSymbolAmount',
 }
 
 export default function RankingPage() {

@@ -9,16 +9,17 @@ interface IPointDetail {
   updateTime: number;
   rate: number;
   followersNumber: number;
+  displayName: string;
 }
 
 interface ITokenEarnListProps {
   dataSource: Array<IPointDetail>;
 }
 
-function PointListItem({ action, symbol, amount, ...props }: IPointDetail) {
+function PointListItem({ action, displayName, symbol, amount, ...props }: IPointDetail) {
   return (
     <div className="flex items-center justify-between py-4 md:py-7 gap-x-8 border-0 border-b border-solid border-neutralBorder">
-      <span className=" flex-1 text-neutralSecondary break-all">{action}</span>
+      <span className=" flex-1 text-neutralSecondary break-all">{displayName}</span>
       <span className=" font-medium text-neutralPrimary">
         {action === 'SelfIncrease' ? (
           <>

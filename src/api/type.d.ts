@@ -59,6 +59,12 @@ interface IRankingData {
   firstSymbolAmount: number;
   secondSymbolAmount: number;
   thirdSymbolAmount: number;
+  fourSymbolAmount: number;
+  fiveSymbolAmount: number;
+  sixSymbolAmount: number;
+  sevenSymbolAmount: number;
+  eightSymbolAmount: number;
+  nineSymbolAmount: number;
 }
 
 interface IRankingRes {
@@ -86,6 +92,7 @@ interface IPointDetail {
   updateTime: number;
   rate: number;
   followersNumber: number;
+  displayName: string;
 }
 
 interface ISocialMedia {
@@ -141,4 +148,10 @@ interface IEarnToken {
   firstSymbolAmount: number;
   secondSymbolAmount: number;
   thirdSymbolAmount: number;
+  fourSymbolAmount: number;
+  fiveSymbolAmount: number;
+  sixSymbolAmount: number;
+  sevenSymbolAmount: number;
+  eightSymbolAmount: number;
+  nineSymbolAmount: number;
 }
