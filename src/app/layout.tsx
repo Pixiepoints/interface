@@ -11,6 +11,7 @@ import 'styles/theme.css';
 
 import Provider from 'provider';
 import { appName } from 'constants/common';
+import Script from 'next/script';
 
 export const metadata = {
   title: appName,
@@ -27,6 +28,18 @@ export const viewport = {
 const RootLayout = ({ children }: { children: React.ReactNode }) => {
   return (
     <html lang="en">
+      <head>
+        <Script src="https://www.googletagmanager.com/gtag/js?id=G-87ZFKS0JQH" />
+        <Script id="google-analytics">
+          {`
+          window.dataLayer = window.dataLayer || [];
+          function gtag(){dataLayer.push(arguments);}
+          gtag('js', new Date());
+ 
+          gtag('config', 'G-87ZFKS0JQH');
+        `}
+        </Script>
+      </head>
       <body>
         <Provider>
           <Layout>{children}</Layout>

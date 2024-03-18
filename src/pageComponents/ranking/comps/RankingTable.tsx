@@ -76,12 +76,12 @@ export function RankingTable({ dataSource, loading, totalCount, onChange, onClic
       dataIndex: 'address',
       key: 'address',
       render: (address: string) => {
+        const fullAddress = addPrefixSuffix(address);
+        const omittedAddress = getOmittedStr(fullAddress, OmittedType.ADDRESS);
         return (
           <div className="flex">
-            <span className=" text-neutralPrimary text-base font-medium">
-              {getOmittedStr(addPrefixSuffix(address), OmittedType.ADDRESS)}
-            </span>
-            <CommonCopy type="black" toCopy={address}></CommonCopy>
+            <span className=" text-neutralPrimary text-base font-medium">{omittedAddress}</span>
+            <CommonCopy type="black" toCopy={fullAddress}></CommonCopy>
           </div>
         );
       },

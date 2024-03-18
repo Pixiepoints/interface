@@ -67,8 +67,8 @@ function FormCard({ className, dappName, dappId, image }: IProps) {
   };
 
   const isValidDomain = (domain: string) => {
-    const domainRegex = /^(?!.*\.(com|cn).*\.(com|cn))[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/;
-    return domainRegex.test(`${domain}${domainSuffix}`);
+    const domainRegex = /^[0-9a-zA-Z-]+$/;
+    return domainRegex.test(domain);
   };
 
   const onDomainChange = (value: string) => {
@@ -85,7 +85,7 @@ function FormCard({ className, dappName, dappId, image }: IProps) {
       return false;
     }
     if (!isValidDomain(value)) {
-      setDomainError('Invalid link.');
+      setDomainError('Only letters (a-z), numbers (0-9), and hyphens (-) are allowed.');
       return false;
     }
     setDomain(value.toLowerCase());
@@ -323,7 +323,7 @@ function FormCard({ className, dappName, dappId, image }: IProps) {
         className={clsx(
           'w-full flex justify-center items-center',
           isMD
-            ? 'fixed bottom-0 left-0 py-[20px] px-[16px] bg-neutralWhiteBg border border-solid border-neutralDivider'
+            ? 'fixed z-10 bottom-0 left-0 py-[20px] px-[16px] bg-neutralWhiteBg border border-solid border-neutralDivider'
             : 'py-[48px]',
         )}>
         <Button
