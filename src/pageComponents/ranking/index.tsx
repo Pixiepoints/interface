@@ -38,24 +38,17 @@ export default function RankingPage() {
   } = useRankingService();
 
   const renderDappListOptions = useMemo(() => {
-    return dappList?.reduce((prev, item) => {
-      const res = prev;
-      if (item.supportsApply) {
-        res.push({
-          value: item.dappId,
-          label: (
-            <Row gutter={[24, 0]} align="middle">
-              <Col className="hidden md:block">
-                <img src={item.icon} className="w-[40px] h-[40px] rounded-sm" width={40} height={40} />
-              </Col>
-              <Col className="text-base text-neutralPrimar font-medium">{item.dappName}</Col>
-            </Row>
-          ),
-        });
-      }
-
-      return res;
-    }, []);
+    return dappList?.map((item) => ({
+      value: item.dappId,
+      label: (
+        <Row gutter={[24, 0]} align="middle">
+          <Col className="hidden md:block">
+            <img src={item.icon} className="w-[40px] h-[40px] rounded-sm" width={40} height={40} />
+          </Col>
+          <Col className="text-base text-neutralPrimar font-medium">{item.dappName}</Col>
+        </Row>
+      ),
+    }));
   }, [dappList]);
 
   return (
@@ -106,11 +99,10 @@ export default function RankingPage() {
           router.push(`/ranking-detail?dappName=${dappName}&domain=${record.domain}`);
         }}
         onChange={({ page, pageSize, field, order }) => {
-          console.log('onChagne', page, pageSize, field, order);
           page && setCurrentPage(page);
           pageSize && setCurrentPageSize(pageSize);
           setFieldOrder(order);
-          setSortField(sortType[field] || 'FirstSymbolAmount');
+          setSortField(sortType[field] || sortType.firstSymbolAmount);
         }}
       />
     </section>

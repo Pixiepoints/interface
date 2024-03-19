@@ -54,9 +54,12 @@ export default function EarnTokenList() {
       skipCount: (pageNum - 1) * pageSize,
       maxResultCount: pageSize,
       Address: wallet.address,
-      sortingKeyWord: sortField,
+      sortingKeyWord: sortField || sortType.firstSymbolAmount,
       sorting: String(fieldOrder).replace('end', '').toUpperCase(),
     };
+    if (!fieldOrder) {
+      delete params.sorting;
+    }
     getEarnTokenList(params);
   }, [dappName, getEarnTokenList, pageNum, pageSize, sortField, fieldOrder, role, wallet.address]);
 
@@ -69,24 +72,17 @@ export default function EarnTokenList() {
   };
 
   const renderDappListOptions = useMemo(() => {
-    return dappList?.reduce((prev, item) => {
-      const res = prev;
-      if (item.supportsApply) {
-        res.push({
-          value: item.dappId,
-          label: (
-            <Row gutter={[24, 0]} align="middle">
-              <Col className="hidden md:block">
-                <SkeletonImage img={item.icon} className="w-[40px] h-[40px]" />
-              </Col>
-              <Col className="text-base text-neutralPrimar font-medium">{item.dappName}</Col>
-            </Row>
-          ),
-        });
-      }
-
-      return res;
-    }, []);
+    return dappList?.map((item) => ({
+      value: item.dappId,
+      label: (
+        <Row gutter={[24, 0]} align="middle">
+          <Col className="hidden md:block">
+            <SkeletonImage img={item.icon} className="w-[40px] h-[40px]" />
+          </Col>
+          <Col className="text-base text-neutralPrimar font-medium">{item.dappName}</Col>
+        </Row>
+      ),
+    }));
   }, [dappList]);
 
   const renderRoleOptions = useMemo(() => {

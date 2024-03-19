@@ -11,6 +11,7 @@ import BigNumber from 'bignumber.js';
 import { EarnAmountCount } from 'pageComponents/ranking/comps/EarnAmount';
 import { OmittedType, addPrefixSuffix, getOmittedStr } from 'utils/addressFormatting';
 import { RoleTypeName } from 'types/role';
+import { SGR_5_TOOL_TIP } from 'constants';
 
 export const columns: (params?: { showShareModal?: (data: IEarnToken) => void }) => ColumnsType<IEarnToken> = ({
   showShareModal,
@@ -111,7 +112,7 @@ export const columns: (params?: { showShareModal?: (data: IEarnToken) => void })
     {
       title: (
         <div className="flex items-center">
-          <ToolTip title="Points Earned from Customised Link Registration">
+          <ToolTip title={SGR_5_TOOL_TIP}>
             <QuestionIconComp className="w-4 h-4 mr-1 cursor-pointer" width={16} height={16} />
           </ToolTip>
           <span>XPSGR-5</span>

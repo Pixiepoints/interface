@@ -10,6 +10,7 @@ import { SorterResult } from 'antd/es/table/interface';
 import BigNumber from 'bignumber.js';
 import { formatTokenPrice } from 'utils/format';
 import { OmittedType, addPrefixSuffix, getOmittedStr } from 'utils/addressFormatting';
+import { SGR_5_TOOL_TIP } from 'constants';
 
 interface IDappTableProps {
   dataSource: IRankingData[];
@@ -76,12 +77,12 @@ export function RankingTable({ dataSource, loading, totalCount, onChange, onClic
       dataIndex: 'address',
       key: 'address',
       render: (address: string) => {
+        const fullAddress = addPrefixSuffix(address);
+        const omittedAddress = getOmittedStr(fullAddress, OmittedType.ADDRESS);
         return (
           <div className="flex">
-            <span className=" text-neutralPrimary text-base font-medium">
-              {getOmittedStr(addPrefixSuffix(address), OmittedType.ADDRESS)}
-            </span>
-            <CommonCopy type="black" toCopy={address}></CommonCopy>
+            <span className=" text-neutralPrimary text-base font-medium">{omittedAddress}</span>
+            <CommonCopy type="black" toCopy={fullAddress}></CommonCopy>
           </div>
         );
       },
@@ -125,7 +126,7 @@ export function RankingTable({ dataSource, loading, totalCount, onChange, onClic
     {
       title: (
         <div className="flex items-center">
-          <ToolTip title="Points Earned from Customised Link Registration">
+          <ToolTip title={SGR_5_TOOL_TIP}>
             <QuestionIconComp className="w-4 h-4 mr-1 cursor-pointer" width={16} height={16} />
           </ToolTip>
           <span>XPSGR-5</span>

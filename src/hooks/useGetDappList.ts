@@ -5,5 +5,5 @@ import { fetchDAppList } from 'api/homeApi';
 
 export default function useGetDappList(params?: IDappListParams) {
   const { data } = useRequest(() => fetchDAppList(params));
-  return useMemo(() => data, [data]);
+  return useMemo(() => (data || []).filter((itm) => itm.supportsApply), [data]);
 }

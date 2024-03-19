@@ -16,15 +16,17 @@ export default function CommonCopy({
 }) {
   const [, setCopied] = useCopyToClipboard();
   return (
-    <span
-      onClick={(e) => {
-        e.stopPropagation();
-        setCopied(toCopy);
-        message.success('Copied');
-      }}
-      className={clsx('flex items-center cursor-pointer', className)}>
+    <span className={clsx('flex items-center cursor-pointer', className)}>
       {children}
-      <span className="ml-2">{type === 'blue' ? <CopyIconBlue /> : <CopyIconBlack />}</span>
+      <span
+        className="ml-2"
+        onClick={(e) => {
+          e.stopPropagation();
+          setCopied(toCopy);
+          message.success('Copied');
+        }}>
+        {type === 'blue' ? <CopyIconBlue /> : <CopyIconBlack />}
+      </span>
     </span>
   );
 }
