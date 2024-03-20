@@ -3,4 +3,5 @@ export type InfoStateType = {
   theme: string | undefined | null;
   config?: IConfigItems;
   itemsFromLocal?: string[];
+  hasToken?: boolean;
 };

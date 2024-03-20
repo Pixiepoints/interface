@@ -24,6 +24,9 @@ export const infoSlice = createSlice({
     setConfig(state, action) {
       state.config = action.payload;
     },
+    setHasToken(state, action) {
+      state.hasToken = action.payload;
+    },
   },
 
   // Special reducer for hydrating the state. Special case for next-redux-wrapper
@@ -37,7 +40,7 @@ export const infoSlice = createSlice({
   },
 });
 
-export const { setIsMobile, setItemsFromLocal, setConfig } = infoSlice.actions;
+export const { setIsMobile, setItemsFromLocal, setConfig, setHasToken } = infoSlice.actions;
 export const selectInfo = (state: AppState) => state.info;
 export const getConfig = (state: AppState) => state.info.config;
 export default infoSlice.reducer;

@@ -10,8 +10,7 @@ import { SorterResult } from 'antd/es/table/interface';
 import BigNumber from 'bignumber.js';
 import { formatTokenPrice } from 'utils/format';
 import { OmittedType, addPrefixSuffix, getOmittedStr } from 'utils/addressFormatting';
-import { SGR_5_TOOL_TIP } from 'constants';
-
+import { SGR_5_TOOL_TIP } from 'constants/index';
 interface IDappTableProps {
   dataSource: IRankingData[];
   loading: boolean;
@@ -21,19 +20,18 @@ interface IDappTableProps {
     pageSize: number;
   };
   onClickRow?: (IRankingData) => void;
-  onChange?: ({
-    page,
-    pageSize,
-    field,
-    order,
-  }: {
-    page?: number;
-    pageSize?: number;
-    field?: string;
-    order?: string;
-  }) => void;
+  onChange?: ({ field, order }: { field?: string; order?: string }) => void;
+  onPaginationChange?: ({ page, pageSize }: { page?: number; pageSize?: number }) => void;
 }
-export function RankingTable({ dataSource, loading, totalCount, onChange, onClickRow, pagination }: IDappTableProps) {
+export function RankingTable({
+  dataSource,
+  loading,
+  totalCount,
+  onChange,
+  onClickRow,
+  pagination,
+  onPaginationChange,
+}: IDappTableProps) {
   const columns: TableColumnsType<any> = [
     {
       title: 'Ranking',
@@ -174,17 +172,16 @@ export function RankingTable({ dataSource, loading, totalCount, onChange, onClic
             x: 'max-content',
           }}></Table>
       </ConfigProvider>
-      {!dataSource?.length || totalCount <= 10 ? null : (
-        <div className="py-[22px]">
-          <Pagination
-            {...pagination}
-            showSizeChanger
-            total={totalCount}
-            pageChange={(page, pageSize) => onChange({ page, pageSize })}
-            pageSizeChange={(page, pageSize) => onChange({ page, pageSize })}
-          />
-        </div>
-      )}
+      <div className="py-[22px]">
+        <Pagination
+          hideOnSinglePage={true}
+          {...pagination}
+          showSizeChanger
+          total={totalCount}
+          pageChange={(page) => onPaginationChange({ page })}
+          pageSizeChange={(page, pageSize) => onPaginationChange({ page, pageSize })}
+        />
+      </div>
     </div>
   );
 }

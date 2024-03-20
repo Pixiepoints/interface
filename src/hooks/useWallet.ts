@@ -26,7 +26,8 @@ import { useSelector } from 'react-redux';
 import { ChainId } from '@portkey/types';
 import useDiscoverProvider from './useDiscoverProvider';
 import { MethodsWallet } from '@portkey/provider-types';
-import { getConfig, setItemsFromLocal } from 'redux/reducer/info';
+import { getConfig, setHasToken, setItemsFromLocal } from 'redux/reducer/info';
+import useGetStoreInfo from 'redux/hooks/useGetStoreInfo';
 
 export const useWalletInit = () => {
   const [, setLocalWalletInfo] = useLocalStorage<WalletInfoType>(storages.walletInfo);
@@ -36,6 +37,8 @@ export const useWalletInit = () => {
   const { wallet, walletType } = useWebLogin();
 
   const backToHomeByRoute = useBackToHomeByRoute();
+
+  const { logout } = useWalletService();
 
   // register Contract method
   // useRegisterContractServiceMethod();
@@ -73,15 +76,7 @@ export const useWalletInit = () => {
 
   useLoginState(callBack);
 
-  useWebLoginEvent(WebLoginEvents.LOGIN_ERROR, (error) => {
-    message.error(`${error.message || 'LOGIN_ERROR'}`);
-  });
-  useWebLoginEvent(WebLoginEvents.LOGINED, () => {
-    console.log('log in');
-    // message.success('log in');
-  });
-
-  useWebLoginEvent(WebLoginEvents.LOGOUT, () => {
+  const resetAccount = useCallback(() => {
     backToHomeByRoute();
     localStorage.removeItem(storages.accountInfo);
     localStorage.removeItem(storages.walletInfo);
@@ -93,10 +88,27 @@ export const useWalletInit = () => {
       }),
     );
     dispatch(setItemsFromLocal([]));
+    dispatch(setHasToken(false));
+  }, [backToHomeByRoute]);
+
+  useWebLoginEvent(WebLoginEvents.LOGIN_ERROR, (error) => {
+    message.error(`${error.message || 'LOGIN_ERROR'}`);
+  });
+  useWebLoginEvent(WebLoginEvents.LOGINED, () => {
+    console.log('log in');
+    // message.success('log in');
+  });
+
+  useWebLoginEvent(WebLoginEvents.LOGOUT, () => {
+    resetAccount();
   });
   useWebLoginEvent(WebLoginEvents.USER_CANCEL, () => {
     console.log('user cancel');
     // message.error('user cancel');
+  });
+
+  useWebLoginEvent(WebLoginEvents.DISCOVER_DISCONNECTED, () => {
+    logout();
   });
 };
 
@@ -198,13 +210,13 @@ export const useCheckLoginAndToken = () => {
   const { loginState, login } = useWebLogin();
   const isLogin = loginState === WebLoginState.logined;
   const { getToken } = useGetToken();
-  const [hasToken, setHasToken] = useState<Boolean>(false);
+  const { hasToken } = useGetStoreInfo();
 
   const checkLogin = async () => {
     const accountInfo = JSON.parse(localStorage.getItem(storages.accountInfo) || '{}');
     if (isLogin) {
       if (accountInfo.token) {
-        setHasToken(true);
+        store.dispatch(setHasToken(true));
         return;
       }
       getToken();
@@ -215,13 +227,13 @@ export const useCheckLoginAndToken = () => {
   useEffect(() => {
     const accountInfo = JSON.parse(localStorage.getItem(storages.accountInfo) || '{}');
     if (accountInfo.token) {
-      setHasToken(true);
+      store.dispatch(setHasToken(true));
       return;
     }
   }, []);
 
   return {
-    isOK: isLogin && hasToken,
+    isOK: isLogin && !!hasToken,
     checkLogin,
   };
 };
@@ -257,21 +269,4 @@ export const useElfWebLoginLifeCircleHookService = () => {
     login,
     registerHook,
   };
-};
-
-export const useBroadcastChannel = () => {
-  useEffect(() => {
-    const onStorageChange = (e: StorageEvent) => {
-      if (e.key === storages.accountInfo) {
-        const oldValue = JSON.parse(e.oldValue || '{}');
-        const newValue = JSON.parse(e.newValue || '{}');
-        if (!newValue.account && !!oldValue.account) {
-          // old has value and new has no value, logout
-          window.location.reload();
-          return;
-        }
-      }
-    };
-    window.addEventListener('storage', onStorageChange);
-  }, []);
 };

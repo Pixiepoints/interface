@@ -98,9 +98,11 @@ export default function RankingPage() {
         onClickRow={(record) => {
           router.push(`/ranking-detail?dappName=${dappName}&domain=${record.domain}`);
         }}
-        onChange={({ page, pageSize, field, order }) => {
+        onPaginationChange={({ page, pageSize }) => {
           page && setCurrentPage(page);
           pageSize && setCurrentPageSize(pageSize);
+        }}
+        onChange={({ field, order }) => {
           setFieldOrder(order);
           setSortField(sortType[field] || sortType.firstSymbolAmount);
         }}

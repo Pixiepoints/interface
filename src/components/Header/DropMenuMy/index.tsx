@@ -7,6 +7,7 @@ import clsx from 'clsx';
 import myIcon, { ReactComponent as MyIconComp } from 'assets/images/icon-my.svg';
 import { useCheckLoginAndToken, useWalletService } from 'hooks/useWallet';
 import { WalletType } from 'aelf-web-login';
+import { useGetToken } from 'hooks/useGetToken';
 
 interface IDropMenuMy {
   isMobile: boolean;
@@ -29,7 +30,8 @@ export function DropMenuMy({ isMobile }: IDropMenuMy) {
   const router = useRouter();
 
   const { isLogin, logout, login, wallet, walletType } = useWalletService();
-  console.log('====', isLogin, wallet);
+  const { checkLogin } = useCheckLoginAndToken();
+  const { checkTokenValid } = useGetToken();
 
   const onClickHandler = (ele: IMenuItem) => {
     setShowDropMenu(false);
@@ -39,6 +41,14 @@ export function DropMenuMy({ isMobile }: IDropMenuMy) {
     }
 
     if (ele.href) {
+      if (ele.href === '/earn-token') {
+        if (checkTokenValid()) {
+          router.push(ele.href);
+        } else {
+          checkLogin();
+        }
+        return;
+      }
       router.push(ele.href);
       return;
     }

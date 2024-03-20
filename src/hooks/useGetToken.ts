@@ -6,6 +6,8 @@ import { message } from 'antd';
 import { useRequest } from 'ahooks';
 import useDiscoverProvider from './useDiscoverProvider';
 import { appName } from 'constants/common';
+import { store } from 'redux/store';
+import { setHasToken } from 'redux/reducer/info';
 
 const AElf = require('aelf-sdk');
 
@@ -15,9 +17,10 @@ export const useGetToken = () => {
   const { getSignatureAndPublicKey } = useDiscoverProvider();
 
   const { runAsync } = useRequest(fetchToken, {
-    retryCount: 3,
+    retryCount: 20,
     manual: true,
     onSuccess(res) {
+      store.dispatch(setHasToken(true));
       localStorage.setItem(
         storages.accountInfo,
         JSON.stringify({
@@ -28,6 +31,17 @@ export const useGetToken = () => {
       );
     },
   });
+
+  const checkTokenValid = useCallback(() => {
+    if (loginState !== WebLoginState.logined) return false;
+    const accountInfo = JSON.parse(localStorage.getItem(storages.accountInfo) || '{}');
+
+    if (accountInfo?.token && Date.now() < accountInfo?.expirationTime && accountInfo.account === wallet.address) {
+      return true;
+    } else {
+      return false;
+    }
+  }, [loginState, wallet.address]);
 
   const getToken = useCallback(async () => {
     if (loginState !== WebLoginState.logined) return;
@@ -87,5 +101,5 @@ export const useGetToken = () => {
     } as ITokenParams);
   }, [loginState, getSignature, wallet]);
 
-  return { getToken };
+  return { getToken, checkTokenValid };
 };
