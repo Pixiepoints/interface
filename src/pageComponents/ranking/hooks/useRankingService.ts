@@ -34,6 +34,9 @@ export function useRankingService() {
     if (!searchOpt.dappName) return;
     const params = Object.assign({}, sortOption, pagination, searchOpt);
     if (!params.keyword) delete params.keyword;
+    if (params.keyword) {
+      params.skipCount = 0;
+    }
     run(params);
   };
 
