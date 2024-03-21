@@ -32,5 +32,5 @@ export function EarnAmountCount(props: IEarnAmountCountProps) {
     cancel();
   });
 
-  return <span className="font-medium  text-base text-neutralPrimary">{formatTokenPrice(count)}</span>;
+  return <span className="font-medium text-neutralPrimary">{formatTokenPrice(count)}</span>;
 }
