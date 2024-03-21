@@ -5,6 +5,7 @@ const useGetStoreInfo = () => {
   const info = useSelector(selectInfo);
   return {
     hasToken: info.hasToken,
+    cmsInfo: info.config,
   };
 };
 

@@ -19,6 +19,7 @@ import { getConfig } from 'redux/reducer/info';
 import { getRpcUrls } from 'constants/url';
 import { decodeAddress, getOriginalAddress } from 'utils/addressFormatting';
 import { useRouter } from 'next/navigation';
+import useGetStoreInfo from 'redux/hooks/useGetStoreInfo';
 
 const TextArea = Input.TextArea;
 
@@ -35,7 +36,8 @@ function FormCard({ className, dappName, dappId, image }: IProps) {
   const resultModal = useModal(ResultModal);
   const { getApplyRawTransaction } = useApply();
   const { isOK, checkLogin } = useCheckLoginAndToken();
-  const { getAccountInfoSync } = useWalletSyncCompleted();
+  const { cmsInfo } = useGetStoreInfo();
+  const { getAccountInfoSync } = useWalletSyncCompleted(cmsInfo.curChain);
   const walletInfo = useSelector(getWalletInfo);
   const { walletType } = useWalletService();
   const config = useSelector(getConfig);
@@ -210,8 +212,8 @@ function FormCard({ className, dappName, dappId, image }: IProps) {
       }
       try {
         setLoading(true);
-        const mainAddress = await getAccountInfoSync();
-        if (!mainAddress) {
+        const targetAddress = await getAccountInfoSync();
+        if (!targetAddress) {
           setLoading(false);
           return;
         }

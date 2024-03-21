@@ -20,7 +20,6 @@ import { useLocalStorage } from 'react-use';
 import { cloneDeep } from 'lodash-es';
 import { WalletInfoType } from 'types';
 import { storages } from 'storages';
-import { useRegisterContractServiceMethod } from 'contract/baseContract';
 import useBackToHomeByRoute from './useBackToHomeByRoute';
 import { useSelector } from 'react-redux';
 import { ChainId } from '@portkey/types';
@@ -28,10 +27,11 @@ import useDiscoverProvider from './useDiscoverProvider';
 import { MethodsWallet } from '@portkey/provider-types';
 import { getConfig, setHasToken, setItemsFromLocal } from 'redux/reducer/info';
 import useGetStoreInfo from 'redux/hooks/useGetStoreInfo';
+import { mainChain } from 'constants/index';
 
 export const useWalletInit = () => {
   const [, setLocalWalletInfo] = useLocalStorage<WalletInfoType>(storages.walletInfo);
-  const getAccountInAELF = useGetAccount('AELF');
+  const getAccountInAELF = useGetAccount(mainChain);
 
   const { getToken } = useGetToken();
   const { wallet, walletType } = useWebLogin();
@@ -120,10 +120,10 @@ export const useWalletService = () => {
 };
 
 // Example Query whether the synchronization of the main sidechain is successful
-export const useWalletSyncCompleted = () => {
+export const useWalletSyncCompleted = (contractChainId: ChainId = mainChain) => {
   const loading = useRef<boolean>(false);
   const info = useSelector(getConfig);
-  const getAccountInAELF = useGetAccount('AELF');
+  const getAccountInAELF = useGetAccount(mainChain);
   const { wallet, walletType } = useWebLogin();
   // console.log(walletType, wallet, 'walletType');
   const { walletInfo } = cloneDeep(useSelector((store: any) => store.userInfo));
@@ -146,63 +146,85 @@ export const useWalletSyncCompleted = () => {
       dispatch(setWalletInfo(walletInfo));
       loading.current = false;
       if (!aelfChainAddress) {
-        return '';
+        return errorFunc();
       } else {
         return walletInfo.aelfChainAddress;
       }
     } catch (error) {
       return errorFunc();
     }
-  }, [walletInfo, getAccountInAELF, setLocalWalletInfo]);
+  }, [walletInfo, getAccountInAELF]);
 
-  const getAccountInfoSync = useCallback(
-    async (chainId = 'AELF') => {
-      if (loading.current) return '';
-      let caHash;
-      let address: any;
-      if (walletType === WalletType.elf) {
-        return walletInfo.aelfChainAddress;
-      }
-      if (walletType === WalletType.portkey) {
-        loading.current = true;
-        const didWalletInfo = wallet.portkeyInfo;
-        caHash = didWalletInfo?.caInfo?.caHash;
-        address = didWalletInfo?.walletInfo?.address;
-        const currentChainId = chainId as ChainId;
-        try {
-          const holder = await did.didWallet.getHolderInfoByContract({
-            chainId: currentChainId,
-            caHash: caHash as string,
-          });
-          const filteredHolders = holder.managerInfos.filter((manager: any) => manager?.address === address);
-          if (filteredHolders.length) {
-            return await getAccount();
-          } else {
-            return errorFunc();
-          }
-        } catch (error) {
-          return errorFunc();
-        }
+  const getTargetChainAddress = useCallback(async () => {
+    try {
+      if (contractChainId === mainChain) {
+        return await getAccount();
       } else {
-        loading.current = true;
-        try {
-          const provider = await discoverProvider();
-          const status = await provider?.request({
-            method: MethodsWallet.GET_WALLET_MANAGER_SYNC_STATUS,
-            payload: { chainId: info.curChain },
-          });
-          if (status) {
-            return await getAccount();
-          } else {
-            return errorFunc();
-          }
-        } catch (error) {
+        loading.current = false;
+        return wallet.address;
+      }
+    } catch (error) {
+      return errorFunc();
+    }
+  }, [contractChainId, getAccount, wallet.address]);
+
+  const getAccountInfoSync = useCallback(async () => {
+    if (loading.current) return '';
+    let caHash;
+    let address: any;
+    if (walletType === WalletType.elf) {
+      return walletInfo.aelfChainAddress;
+    }
+    if (walletType === WalletType.portkey) {
+      loading.current = true;
+      const didWalletInfo = wallet.portkeyInfo;
+      caHash = didWalletInfo?.caInfo?.caHash;
+      address = didWalletInfo?.walletInfo?.address;
+      // PortkeyOriginChainId register network address
+      const originChainId = didWalletInfo?.chainId;
+      if (originChainId === contractChainId) {
+        return await getTargetChainAddress();
+      }
+      try {
+        const holder = await did.didWallet.getHolderInfoByContract({
+          chainId: contractChainId as ChainId,
+          caHash: caHash as string,
+        });
+        const filteredHolders = holder.managerInfos.filter((manager: any) => manager?.address === address);
+        if (filteredHolders.length) {
+          return await getTargetChainAddress();
+        } else {
           return errorFunc();
         }
+      } catch (error) {
+        return errorFunc();
       }
-    },
-    [wallet, walletType, walletInfo],
-  );
+    } else {
+      loading.current = true;
+      try {
+        const provider = await discoverProvider();
+        const status = await provider?.request({
+          method: MethodsWallet.GET_WALLET_MANAGER_SYNC_STATUS,
+          payload: { chainId: contractChainId },
+        });
+        if (status) {
+          return await getTargetChainAddress();
+        } else {
+          return errorFunc();
+        }
+      } catch (error) {
+        return errorFunc();
+      }
+    }
+  }, [
+    walletType,
+    walletInfo.aelfChainAddress,
+    wallet.portkeyInfo,
+    contractChainId,
+    getTargetChainAddress,
+    did.didWallet,
+    discoverProvider,
+  ]);
   return { getAccountInfoSync };
 };
 
