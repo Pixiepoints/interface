@@ -20,7 +20,6 @@ import { useLocalStorage } from 'react-use';
 import { cloneDeep } from 'lodash-es';
 import { WalletInfoType } from 'types';
 import { storages } from 'storages';
-import { useRegisterContractServiceMethod } from 'contract/baseContract';
 import useBackToHomeByRoute from './useBackToHomeByRoute';
 import { useSelector } from 'react-redux';
 import { ChainId } from '@portkey/types';
@@ -28,10 +27,11 @@ import useDiscoverProvider from './useDiscoverProvider';
 import { MethodsWallet } from '@portkey/provider-types';
 import { getConfig, setHasToken, setItemsFromLocal } from 'redux/reducer/info';
 import useGetStoreInfo from 'redux/hooks/useGetStoreInfo';
+import { mainChain } from 'constants/index';
 
 export const useWalletInit = () => {
   const [, setLocalWalletInfo] = useLocalStorage<WalletInfoType>(storages.walletInfo);
-  const getAccountInAELF = useGetAccount('AELF');
+  const getAccountInAELF = useGetAccount(mainChain);
 
   const { getToken } = useGetToken();
   const { wallet, walletType } = useWebLogin();
@@ -120,10 +120,10 @@ export const useWalletService = () => {
 };
 
 // Example Query whether the synchronization of the main sidechain is successful
-export const useWalletSyncCompleted = (contractChainId = 'AELF') => {
+export const useWalletSyncCompleted = (contractChainId: ChainId = mainChain) => {
   const loading = useRef<boolean>(false);
   const info = useSelector(getConfig);
-  const getAccountInAELF = useGetAccount('AELF');
+  const getAccountInAELF = useGetAccount(mainChain);
   const { wallet, walletType } = useWebLogin();
   // console.log(walletType, wallet, 'walletType');
   const { walletInfo } = cloneDeep(useSelector((store: any) => store.userInfo));
@@ -153,14 +153,18 @@ export const useWalletSyncCompleted = (contractChainId = 'AELF') => {
     } catch (error) {
       return errorFunc();
     }
-  }, [walletInfo, getAccountInAELF, setLocalWalletInfo]);
+  }, [walletInfo, getAccountInAELF]);
 
   const getTargetChainAddress = useCallback(async () => {
-    if (contractChainId === 'AELF') {
-      return await getAccount();
-    } else {
-      loading.current = false;
-      return wallet.address;
+    try {
+      if (contractChainId === mainChain) {
+        return await getAccount();
+      } else {
+        loading.current = false;
+        return wallet.address;
+      }
+    } catch (error) {
+      return errorFunc();
     }
   }, [contractChainId, getAccount, wallet.address]);
 
