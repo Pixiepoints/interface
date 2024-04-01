@@ -5,7 +5,7 @@ const sentryWebpackPluginOptions = {
   include: '.next',
   configFile: '.sentryclirc',
   urlPrefix: '~/_next',
-  org: 'points-web',
+  org: 'blockchainforever',
   project: 'points-web',
 };
 module.exports = [
