@@ -8,14 +8,23 @@ interface IEarnAmountCountProps {
   amount: number | string;
   rate: number;
   followersNumber: number;
+  inviteRate: number;
+  inviteFollowersNumber: number;
 }
-
-function computeAmountCount({ updateTime, amount, rate, followersNumber }: IEarnAmountCountProps) {
+function computeAmountCount({
+  updateTime,
+  amount,
+  rate,
+  followersNumber,
+  inviteRate,
+  inviteFollowersNumber,
+}: IEarnAmountCountProps) {
   const times = Math.floor(Math.max(0, Date.now() - updateTime) / 1000);
 
   return BigNumber(times)
     .times(rate)
     .times(followersNumber)
+    .plus(BigNumber(times).times(inviteRate).times(inviteFollowersNumber))
     .plus(BigNumber(amount).dividedBy(10 ** 8))
     .toString();
 }

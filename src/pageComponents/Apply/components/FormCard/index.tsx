@@ -1,8 +1,8 @@
 import clsx from 'clsx';
-import React, { useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from 'react';
 import styles from './style.module.css';
-import { Form } from 'antd';
-import { Button, Input, ToolTip } from 'aelf-design';
+import { Form, InputRef, MenuProps } from 'antd';
+import { Button, Tooltip, Input, Dropdown } from 'aelf-design';
 import { ReactComponent as QuestionCircleOutlined } from 'assets/images/icons/questionCircleOutlined.svg';
 import useResponsive from 'hooks/useResponsive';
 import { fetchApplyCheck } from 'api/applyApi';
@@ -17,9 +17,11 @@ import { useSelector } from 'react-redux';
 import { getWalletInfo } from 'redux/reducer/userInfo';
 import { getConfig } from 'redux/reducer/info';
 import { getRpcUrls } from 'constants/url';
-import { decodeAddress, getOriginalAddress } from 'utils/addressFormatting';
+import { addPrefixSuffix, decodeAddress, getOriginalAddress } from 'utils/addressFormatting';
 import { useRouter } from 'next/navigation';
 import useGetStoreInfo from 'redux/hooks/useGetStoreInfo';
+import useLoading from 'hooks/useLoading';
+import { useWindowSize } from 'react-use';
 
 const TextArea = Input.TextArea;
 
@@ -28,6 +30,11 @@ interface IProps {
   dappName: string;
   dappId: string;
   image?: string | StaticImageData;
+}
+
+enum AddressType {
+  invite = 'invite',
+  receive = 'receive',
 }
 
 function FormCard({ className, dappName, dappId, image }: IProps) {
@@ -39,34 +46,63 @@ function FormCard({ className, dappName, dappId, image }: IProps) {
   const { cmsInfo } = useGetStoreInfo();
   const { getAccountInfoSync } = useWalletSyncCompleted(cmsInfo.curChain);
   const walletInfo = useSelector(getWalletInfo);
-  const { walletType } = useWalletService();
+  const { walletType, wallet, isLogin } = useWalletService();
   const config = useSelector(getConfig);
   const { domain: domainSuffix } = config;
   const router = useRouter();
+  const { showLoading } = useLoading();
+  const { width } = useWindowSize();
+
+  const inviteInputRef = useRef<InputRef>();
+  const inviteInputContainerRef = useRef<HTMLDivElement>();
+  const [inviteInputDropDownWidth, setInviteInputDropDownWidth] = useState<number>(0);
 
   const [domain, setDomain] = useState<string>();
   const [depositAddress, setDepositAddress] = useState<string>();
   const [description, setDescription] = useState<string>();
   const [loading, setLoading] = useState<boolean>(false);
+  const [inviteAddress, setInviteAddress] = useState<string>();
 
   const [domainError, setDomainError] = useState<string>();
-  const [depositAddressError, setDepositAddressError] = useState<string>();
-  const [depositAddressWarning, setDepositAddressWarning] = useState<string>();
+  const [addressValid, setAddressValid] = useState<
+    Record<AddressType, Record<'warning' | 'error', undefined | string>>
+  >({
+    [AddressType.invite]: {
+      warning: undefined,
+      error: undefined,
+    },
+    [AddressType.receive]: {
+      warning: undefined,
+      error: undefined,
+    },
+  });
 
   const disabled = useMemo(() => {
-    return !!(domainError || depositAddressError || !domain || !depositAddress);
-  }, [depositAddress, depositAddressError, domain, domainError]);
+    return !!(domainError || addressValid.invite.error || addressValid.receive.error || !domain || !depositAddress);
+  }, [addressValid.invite.error, addressValid.receive.error, depositAddress, domain, domainError]);
 
-  const renderLabel = (title: string, toolTip?: string) => {
+  const myAddress = useMemo(() => {
+    return addPrefixSuffix(wallet.address);
+  }, [wallet.address]);
+
+  const renderLabel = (title: string, TooltipMsg?: string) => {
     return (
       <div className="flex items-center mb-[8px]">
         <span className="text-lg md:text-xl font-medium text-neutralTitle">{title}</span>
-        <ToolTip title={toolTip}>
+        <Tooltip title={TooltipMsg}>
           <QuestionCircleOutlined className={clsx('w-[24px] h-[24px] ml-[8px]', styles.icon)} />
-        </ToolTip>
+        </Tooltip>
       </div>
     );
   };
+
+  useLayoutEffect(() => {
+    setInviteInputDropDownWidth(inviteInputContainerRef.current.offsetWidth);
+  }, []);
+
+  useEffect(() => {
+    setInviteInputDropDownWidth(inviteInputContainerRef.current.offsetWidth);
+  }, [width]);
 
   const isValidDomain = (domain: string) => {
     const domainRegex = /^[0-9a-zA-Z-]+$/;
@@ -99,36 +135,67 @@ function FormCard({ className, dappName, dappId, image }: IProps) {
     setDepositAddress(value);
   };
 
-  const onDepositAddressBlur = (value?: string) => {
+  const onAddressValid = (type: AddressType, value?: string) => {
     if (!value) {
-      setDepositAddressError('This field is required.');
-      setDepositAddressWarning(undefined);
+      setAddressValid((value) => {
+        return {
+          ...value,
+          [type]: {
+            warning: undefined,
+            error: 'This field is required.',
+          },
+        };
+      });
       return false;
     }
     const isValidAddress = decodeAddress(value);
     if (isValidAddress) {
       if (isValidAddress === 'main') {
-        setDepositAddressWarning(
-          'The address you entered is a MainChain address, and it has been automatically corrected to the corresponding SideChain address. Points will be sent to the SideChain address.',
-        );
-        setDepositAddressError(undefined);
+        setAddressValid((value) => {
+          return {
+            ...value,
+            [type]: {
+              warning:
+                'The address you entered is a MainChain address, and it has been automatically corrected to the corresponding SideChain address. Points will be sent to the SideChain address.',
+              error: undefined,
+            },
+          };
+        });
         return true;
       }
       if (isValidAddress === 'side') {
-        setDepositAddressError(undefined);
-        setDepositAddressWarning(undefined);
+        setAddressValid((value) => {
+          return {
+            ...value,
+            [type]: {
+              warning: undefined,
+              error: undefined,
+            },
+          };
+        });
         return true;
       }
       return false;
     } else {
-      setDepositAddressError('Invalid address.');
-      setDepositAddressWarning(undefined);
+      setAddressValid((value) => {
+        return {
+          ...value,
+          [type]: {
+            warning: undefined,
+            error: 'Please enter a SideChain address on aelf.',
+          },
+        };
+      });
       return false;
     }
   };
 
   const onDescriptionChange = (value: string) => {
     setDescription(value);
+  };
+
+  const onInviteAddressChange = (value: string) => {
+    setInviteAddress(value);
   };
 
   const showResultModal = (status: Status.ERROR | Status.SUCCESS) => {
@@ -181,6 +248,7 @@ function FormCard({ className, dappName, dappId, image }: IProps) {
             domain: `${domain}${domainSuffix}`,
             dappId,
             invitee: getOriginalAddress(depositAddress),
+            inviter: getOriginalAddress(inviteAddress),
           },
           rpcUrl: getRpcUrls()[config.curChain],
           chainId: config.curChain,
@@ -207,7 +275,13 @@ function FormCard({ className, dappName, dappId, image }: IProps) {
 
   const onConfirm = async () => {
     if (isOK) {
-      if (!(onDomainBlur(domain) && onDepositAddressBlur(depositAddress))) {
+      if (
+        !(
+          onDomainBlur(domain) &&
+          onAddressValid(AddressType.receive, depositAddress) &&
+          onAddressValid(AddressType.invite, inviteAddress)
+        )
+      ) {
         return;
       }
       try {
@@ -215,9 +289,10 @@ function FormCard({ className, dappName, dappId, image }: IProps) {
         const targetAddress = await getAccountInfoSync();
         if (!targetAddress) {
           setLoading(false);
+          showLoading({ showClose: true, content: 'Synchronising data on the blockchain. Please wait a few seconds.' });
           return;
         }
-        if (!dappId || !domain || !depositAddress) return;
+        if (!dappId || !domain || !depositAddress || !inviteAddress) return;
         const res = await fetchApplyCheck({
           dappName: dappId,
           domain: `${domain}${domainSuffix}`,
@@ -225,8 +300,15 @@ function FormCard({ className, dappName, dappId, image }: IProps) {
         });
         console.log('=====fetchApplyCheck', res);
         if (res.addressCheck) {
-          setDepositAddressError(res.addressCheck);
-          setDepositAddressWarning(res.addressCheck);
+          setAddressValid((value) => {
+            return {
+              ...value,
+              [AddressType.receive]: {
+                error: res.addressCheck,
+                warning: res.addressCheck,
+              },
+            };
+          });
           setLoading(false);
           return;
         }
@@ -260,6 +342,72 @@ function FormCard({ className, dappName, dappId, image }: IProps) {
     }
   };
 
+  const handleClickMyAddress = useCallback(() => {
+    setInviteAddress(myAddress);
+    inviteInputRef.current.focus();
+  }, [myAddress]);
+
+  const items: MenuProps['items'] = useMemo(() => {
+    return [
+      {
+        key: '1',
+        label: (
+          <div onClick={handleClickMyAddress}>
+            <div className="text-neutralTertiary text-sm font-normal">My Address</div>
+            <div className="break-all text-sm md:text-base font-medium text-neutralPrimary">{myAddress}</div>
+          </div>
+        ),
+      },
+    ];
+  }, [handleClickMyAddress, myAddress]);
+
+  const renderInviteInput = useMemo(() => {
+    const input = (
+      <div ref={inviteInputContainerRef}>
+        <Input
+          ref={inviteInputRef}
+          placeholder="Enter referrer wallet address"
+          value={inviteAddress}
+          onChange={(e) => onInviteAddressChange(e.target.value)}
+          onBlur={(e) => {
+            onAddressValid(AddressType.invite, e.target.value);
+          }}
+          status={addressValid[AddressType.invite].error ? 'error' : ''}
+        />
+      </div>
+    );
+    return isLogin ? (
+      <Dropdown
+        className={styles.myAddressDropDownCustom}
+        menu={{ items }}
+        trigger={['click']}
+        placement="bottom"
+        getPopupContainer={(t) => t}
+        overlayStyle={{
+          width: inviteInputDropDownWidth || 'auto',
+        }}>
+        {input}
+      </Dropdown>
+    ) : (
+      input
+    );
+  }, [addressValid, inviteAddress, inviteInputDropDownWidth, isLogin, items]);
+
+  const renderAddressErrorTip = useCallback(
+    (type: AddressType) => {
+      const { error, warning } = addressValid[type];
+      return (
+        (error || warning) && (
+          <span
+            className={clsx('mt-[8px] text-xs', error && 'text-functionalDanger', warning && 'text-functionalWarning')}>
+            {error || warning}
+          </span>
+        )
+      );
+    },
+    [addressValid],
+  );
+
   return (
     <div className={clsx(className)}>
       <div className={clsx('flex', styles['form-card'])}>
@@ -284,6 +432,15 @@ function FormCard({ className, dappName, dappId, image }: IProps) {
           </Form.Item>
           <Form.Item
             label={renderLabel(
+              'Referrer',
+              'Referrer is the address who invites you to register the customised link. You have the option to enter any address, including your current login account. Referrer will earn points from activities conducted through this customised link. Recommended address type: SideChain address created using Portkey.',
+            )}
+            className="mb-[24px] md:mb-[40px]">
+            {renderInviteInput}
+            {renderAddressErrorTip(AddressType.invite)}
+          </Form.Item>
+          <Form.Item
+            label={renderLabel(
               'Wallet Address for Receiving Points',
               'All the points earned for the advocate will be sent to this address. Recommended address type: SideChain address created using Portkey.',
             )}
@@ -292,19 +449,12 @@ function FormCard({ className, dappName, dappId, image }: IProps) {
               placeholder="Enter wallet address for receiving points"
               value={depositAddress}
               onChange={(e) => onDepositAddressChange(e.target.value)}
-              onBlur={(e) => onDepositAddressBlur(e.target.value)}
-              status={depositAddressError ? 'error' : ''}
+              onBlur={(e) => {
+                onAddressValid(AddressType.receive, e.target.value);
+              }}
+              status={addressValid[AddressType.receive].error ? 'error' : ''}
             />
-            {(depositAddressError || depositAddressWarning) && (
-              <span
-                className={clsx(
-                  'mt-[8px] text-xs',
-                  depositAddressError && 'text-functionalDanger',
-                  depositAddressWarning && 'text-functionalWarning',
-                )}>
-                {depositAddressError || depositAddressWarning}
-              </span>
-            )}
+            {renderAddressErrorTip(AddressType.receive)}
           </Form.Item>
           <Form.Item
             label={renderLabel(

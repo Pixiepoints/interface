@@ -217,13 +217,13 @@ export const useWalletSyncCompleted = (contractChainId: ChainId = mainChain) => 
       }
     }
   }, [
-    walletType,
-    walletInfo.aelfChainAddress,
-    wallet.portkeyInfo,
     contractChainId,
-    getTargetChainAddress,
     did.didWallet,
     discoverProvider,
+    getTargetChainAddress,
+    wallet.portkeyInfo,
+    walletInfo.aelfChainAddress,
+    walletType,
   ]);
   return { getAccountInfoSync };
 };
