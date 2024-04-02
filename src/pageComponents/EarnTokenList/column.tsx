@@ -34,13 +34,15 @@ export const columns: (params?: { showShareModal?: (data: IEarnToken) => void })
     },
     {
       title: 'Customised Link',
-      width: 300,
+      width: 280,
       key: 'domain',
       dataIndex: 'domain',
       render: (domain: string, record: IEarnToken) => (
         <span className="flex items-center" onClick={(e) => e.stopPropagation()}>
           <a target="_black" href={`https://${domain}`} className="ml-2">
-            <span className="text-brandDefault text-base font-medium cursor-pointer">{domain}</span>
+            <div className="text-brandDefault text-base font-medium cursor-pointer break-all max-w-[190px] truncate">
+              {domain}
+            </div>
           </a>
           <CommonCopy toCopy={domain} />
           <div
@@ -106,7 +108,9 @@ export const columns: (params?: { showShareModal?: (data: IEarnToken) => void })
       key: 'secondSymbolAmount',
       width: 180,
       sorter: true,
-      render: (secondSymbolAmount, item) => <EarnAmountCount {...item} amount={secondSymbolAmount} />,
+      render: (secondSymbolAmount, item) => (
+        <EarnAmountCount {...item} amount={secondSymbolAmount} className="text-base" />
+      ),
     },
     {
       title: (

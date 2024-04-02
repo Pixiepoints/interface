@@ -118,7 +118,7 @@ export function RankingTable({
       sorter: true,
       width: 180,
       render: (_, item) => {
-        return <EarnAmountCount {...item} amount={item.secondSymbolAmount} />;
+        return <EarnAmountCount {...item} amount={item.secondSymbolAmount} className="text-base" />;
       },
     },
     {
@@ -149,6 +149,7 @@ export function RankingTable({
           <p className=" font-medium text-base text-neutralSecondary py-10 md:py-40"> No search results</p>
         )}>
         <Table
+          rowKey="domain"
           dataSource={dataSource}
           columns={columns}
           loading={loading}

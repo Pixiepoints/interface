@@ -1,7 +1,8 @@
 import { useTimeoutFn, useUnmount } from 'react-use';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { formatTokenPrice } from 'utils/format';
 import BigNumber from 'bignumber.js';
+import clsx from 'clsx';
 
 interface IEarnAmountCountProps {
   updateTime: number;
@@ -10,6 +11,7 @@ interface IEarnAmountCountProps {
   followersNumber: number;
   inviteRate: number;
   inviteFollowersNumber: number;
+  className?: string;
 }
 function computeAmountCount({
   updateTime,
@@ -29,7 +31,7 @@ function computeAmountCount({
     .toString();
 }
 
-export function EarnAmountCount(props: IEarnAmountCountProps) {
+export function EarnAmountCount({ className, ...props }: IEarnAmountCountProps) {
   const [count, setCount] = useState(computeAmountCount(props));
 
   const [, cancel, reset] = useTimeoutFn(() => {
@@ -41,5 +43,5 @@ export function EarnAmountCount(props: IEarnAmountCountProps) {
     cancel();
   });
 
-  return <span className="font-medium text-neutralPrimary">{formatTokenPrice(count)}</span>;
+  return <span className={clsx('font-medium text-neutralPrimary', className)}>{formatTokenPrice(count)}</span>;
 }
