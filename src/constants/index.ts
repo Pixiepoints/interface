@@ -12,3 +12,4 @@ export enum NetworkType {
 export const SECONDS_60 = 60000;
 
 export const mainChain = 'AELF';
+export const SGR_5_TOOL_TIP = 'Points Earned from Cat Adopting';

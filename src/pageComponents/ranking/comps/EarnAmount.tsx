@@ -1,5 +1,5 @@
-import { useInterval } from 'ahooks';
-import { useState } from 'react';
+import { useTimeoutFn, useUnmount } from 'react-use';
+import { useEffect, useState } from 'react';
 import { formatTokenPrice } from 'utils/format';
 import BigNumber from 'bignumber.js';
 
@@ -23,9 +23,14 @@ function computeAmountCount({ updateTime, amount, rate, followersNumber }: IEarn
 export function EarnAmountCount(props: IEarnAmountCountProps) {
   const [count, setCount] = useState(computeAmountCount(props));
 
-  useInterval(() => {
+  const [, cancel, reset] = useTimeoutFn(() => {
     setCount(computeAmountCount(props));
+    reset();
   }, 1000);
 
-  return <span className="font-medium  text-base text-neutralPrimary">{formatTokenPrice(count)}</span>;
+  useUnmount(() => {
+    cancel();
+  });
+
+  return <span className="font-medium text-neutralPrimary">{formatTokenPrice(count)}</span>;
 }

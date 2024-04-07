@@ -1,14 +1,15 @@
 import { useRequest } from 'ahooks';
 import { fetchRankingList } from 'api/rankingApi';
 import { useEffect, useMemo, useState } from 'react';
-import { useMount } from 'react-use';
 import useGetDappList from 'hooks/useGetDappList';
+import { sortType } from '..';
 
 export function useRankingService() {
   const { data, run, loading } = useRequest(fetchRankingList, {
     debounceWait: 300,
     debounceLeading: true,
     manual: true,
+    pollingInterval: 1000 * 60,
   });
 
   const dappList = useGetDappList({ dappName: '' });
@@ -17,17 +18,8 @@ export function useRankingService() {
   const [keyword, setKeyWord] = useState<string>('');
   const [currentPageSize, setCurrentPageSize] = useState<number>(10);
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const [sortField, setSortField] = useState<string>('firstSymbolAmount');
+  const [sortField, setSortField] = useState<string>(sortType.firstSymbolAmount);
   const [fieldOrder, setFieldOrder] = useState<string>();
-
-  // useMount(() => {
-  //   run({
-  //     dappName: 'schroding',
-  //     keyword: '',
-  //     skipCount: 0,
-  //     maxResultCount: 10,
-  //   });
-  // });
 
   const onSearch = () => {
     const pageNumber = currentPageSize;
@@ -42,6 +34,9 @@ export function useRankingService() {
     if (!searchOpt.dappName) return;
     const params = Object.assign({}, sortOption, pagination, searchOpt);
     if (!params.keyword) delete params.keyword;
+    if (params.keyword) {
+      params.skipCount = 0;
+    }
     run(params);
   };
 
