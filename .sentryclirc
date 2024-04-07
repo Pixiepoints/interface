@@ -1,0 +1,13 @@
+[defaults]
+url=https://sentry.io/
+project=points-web
+org=blockchainforever
+
+[auth]
+token=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
+
+[log]
+level=debug
+
+[http]
+verify_ssl=false

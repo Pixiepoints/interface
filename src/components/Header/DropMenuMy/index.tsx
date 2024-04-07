@@ -1,6 +1,6 @@
 import { Button } from 'aelf-design';
 import { DropMenuBase, IMenuItem } from 'components/DropMenuBase';
-import { useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { usePathname, useRouter } from 'next/navigation';
 import { MenuProps } from 'antd';
 import clsx from 'clsx';
@@ -33,26 +33,29 @@ export function DropMenuMy({ isMobile }: IDropMenuMy) {
   const { checkLogin } = useCheckLoginAndToken();
   const { checkTokenValid } = useGetToken();
 
-  const onClickHandler = (ele: IMenuItem) => {
-    setShowDropMenu(false);
-    if (ele.label === 'Log Out') {
-      logout();
-      return;
-    }
-
-    if (ele.href) {
-      if (ele.href === '/earn-token') {
-        if (checkTokenValid()) {
-          router.push(ele.href);
-        } else {
-          checkLogin();
-        }
+  const onClickHandler = useCallback(
+    (ele: IMenuItem) => {
+      setShowDropMenu(false);
+      if (ele.label === 'Log Out') {
+        logout();
         return;
       }
-      router.push(ele.href);
-      return;
-    }
-  };
+
+      if (ele.href) {
+        if (ele.href === '/earn-token') {
+          if (checkTokenValid()) {
+            router.push(ele.href);
+          } else {
+            checkLogin();
+          }
+          return;
+        }
+        router.push(ele.href);
+        return;
+      }
+    },
+    [checkLogin, checkTokenValid, logout, router],
+  );
 
   const items: MenuProps['items'] = useMemo(() => {
     const tempItems = [...MenuItems];
@@ -75,7 +78,7 @@ export function DropMenuMy({ isMobile }: IDropMenuMy) {
       ),
       key: idx + '',
     }));
-  }, [walletType]);
+  }, [walletType, pathName, onClickHandler]);
 
   const itemsForPhone = useMemo(() => {
     const tempItems = [...MenuItems];
@@ -95,7 +98,7 @@ export function DropMenuMy({ isMobile }: IDropMenuMy) {
         {ele.label}
       </div>
     ));
-  }, [walletType]);
+  }, [walletType, onClickHandler]);
 
   const MyIcon = useMemo(
     () => (

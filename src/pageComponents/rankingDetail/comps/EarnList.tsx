@@ -10,6 +10,10 @@ interface IPointDetail {
   rate: number;
   followersNumber: number;
   displayName: string;
+  inviteFollowersNumber: number;
+  inviteRate: number;
+  thirdFollowersNumber: number;
+  thirdRate: number;
 }
 
 interface ITokenEarnListProps {
