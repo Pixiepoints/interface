@@ -95,19 +95,18 @@ export const useWalletInit = () => {
     message.error(`${error.message || 'LOGIN_ERROR'}`);
   });
   useWebLoginEvent(WebLoginEvents.LOGINED, () => {
-    console.log('log in');
-    // message.success('log in');
+    console.info('log in');
   });
 
   useWebLoginEvent(WebLoginEvents.LOGOUT, () => {
     resetAccount();
   });
   useWebLoginEvent(WebLoginEvents.USER_CANCEL, () => {
-    console.log('user cancel');
-    // message.error('user cancel');
+    console.info('user cancel');
   });
 
   useWebLoginEvent(WebLoginEvents.DISCOVER_DISCONNECTED, () => {
+    console.info('Your account has been logged out');
     logout();
   });
 };

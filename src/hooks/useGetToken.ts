@@ -34,7 +34,13 @@ export const useGetToken = () => {
 
   const checkTokenValid = useCallback(() => {
     if (loginState !== WebLoginState.logined) return false;
-    const accountInfo = JSON.parse(localStorage.getItem(storages.accountInfo) || '{}');
+    let accountInfo;
+    try {
+      accountInfo = JSON.parse(localStorage.getItem(storages.accountInfo) || '{}');
+    } catch (error) {
+      console.error('parse token from localStorage error', error);
+      return false;
+    }
 
     if (accountInfo?.token && Date.now() < accountInfo?.expirationTime && accountInfo.account === wallet.address) {
       return true;
