@@ -11,6 +11,10 @@ export interface IEarnToken {
   rate: number;
   updateTime: number;
   followersNumber: number;
+  inviteFollowersNumber: number;
+  inviteRate: number;
+  thirdFollowersNumber: number;
+  thirdRate: number;
 }
 
 export interface IEarnListResults {
@@ -44,6 +48,10 @@ export interface IPointDetail {
   rate: number;
   followersNumber: number;
   displayName: string;
+  inviteFollowersNumber: number;
+  inviteRate: number;
+  thirdFollowersNumber: number;
+  thirdRate: number;
 }
 
 export interface IEarnTokenDetailResults {

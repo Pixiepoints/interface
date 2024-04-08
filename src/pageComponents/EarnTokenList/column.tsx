@@ -5,13 +5,12 @@ import SkeletonImage from 'components/SkeletonImage';
 import { IEarnToken } from 'types/earnToke';
 import { formatTokenPrice } from 'utils/format';
 import { OpenLink } from 'assets/images/icons/index';
-import { ToolTip } from 'aelf-design';
+import { Tooltip } from 'aelf-design';
 import { ReactComponent as QuestionIconComp } from 'assets/images/icons/questionCircleOutlined.svg';
 import BigNumber from 'bignumber.js';
 import { EarnAmountCount } from 'pageComponents/ranking/comps/EarnAmount';
-import { OmittedType, addPrefixSuffix, getOmittedStr } from 'utils/addressFormatting';
 import { RoleTypeName } from 'types/role';
-import { SGR_5_TOOL_TIP } from 'constants';
+import { SGR_5_TOOL_TIP } from 'constants/index';
 
 export const columns: (params?: { showShareModal?: (data: IEarnToken) => void }) => ColumnsType<IEarnToken> = ({
   showShareModal,
@@ -35,13 +34,15 @@ export const columns: (params?: { showShareModal?: (data: IEarnToken) => void })
     },
     {
       title: 'Customised Link',
-      width: 300,
+      width: 280,
       key: 'domain',
       dataIndex: 'domain',
       render: (domain: string, record: IEarnToken) => (
         <span className="flex items-center" onClick={(e) => e.stopPropagation()}>
           <a target="_black" href={`https://${domain}`} className="ml-2">
-            <span className="text-brandDefault text-base font-medium cursor-pointer">{domain}</span>
+            <div className="text-brandDefault text-base font-medium cursor-pointer break-all max-w-[190px] truncate">
+              {domain}
+            </div>
           </a>
           <CommonCopy toCopy={domain} />
           <div
@@ -78,9 +79,9 @@ export const columns: (params?: { showShareModal?: (data: IEarnToken) => void })
     {
       title: (
         <div className="flex items-center">
-          <ToolTip title="Points Earned from New User Account Creation">
+          <Tooltip title="Points Earned from New User Account Creation">
             <QuestionIconComp className="w-4 h-4 mr-1 cursor-pointer" width={16} height={16} />
-          </ToolTip>
+          </Tooltip>
           <span>XPSGR-1</span>
         </div>
       ),
@@ -97,9 +98,9 @@ export const columns: (params?: { showShareModal?: (data: IEarnToken) => void })
     {
       title: (
         <div className="flex items-center">
-          <ToolTip title="Perpetual Points (Auto rewards generated every second)">
+          <Tooltip title="Perpetual Points (Auto rewards generated every second)">
             <QuestionIconComp className="w-4 h-4 mr-1 cursor-pointer" width={16} height={16} />
-          </ToolTip>
+          </Tooltip>
           <span>XPSGR-2</span>
         </div>
       ),
@@ -107,14 +108,16 @@ export const columns: (params?: { showShareModal?: (data: IEarnToken) => void })
       key: 'secondSymbolAmount',
       width: 180,
       sorter: true,
-      render: (secondSymbolAmount, item) => <EarnAmountCount {...item} amount={secondSymbolAmount} />,
+      render: (secondSymbolAmount, item) => (
+        <EarnAmountCount {...item} amount={secondSymbolAmount} className="text-base" />
+      ),
     },
     {
       title: (
         <div className="flex items-center">
-          <ToolTip title={SGR_5_TOOL_TIP}>
+          <Tooltip title={SGR_5_TOOL_TIP}>
             <QuestionIconComp className="w-4 h-4 mr-1 cursor-pointer" width={16} height={16} />
-          </ToolTip>
+          </Tooltip>
           <span>XPSGR-5</span>
         </div>
       ),

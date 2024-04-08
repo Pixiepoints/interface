@@ -70,5 +70,5 @@ export function DappTable({ dataSource, loading }: IDappTableProps) {
     },
   ];
 
-  return <Table dataSource={dataSource} columns={columns} loading={loading}></Table>;
+  return <Table dataSource={dataSource} columns={columns} loading={loading} rowKey="dappName"></Table>;
 }
