@@ -136,58 +136,33 @@ function FormCard({ className, dappName, dappId, image }: IProps) {
   };
 
   const onAddressValid = (type: AddressType, value?: string) => {
-    if (!value) {
-      setAddressValid((value) => {
-        return {
-          ...value,
-          [type]: {
-            warning: undefined,
-            error: 'This field is required.',
-          },
-        };
-      });
-      return false;
-    }
+    let isValid = false;
     const isValidAddress = decodeAddress(value);
     if (isValidAddress) {
-      if (isValidAddress === 'main') {
-        setAddressValid((value) => {
-          return {
-            ...value,
-            [type]: {
-              warning:
-                'The address you entered is a MainChain address, and it has been automatically corrected to the corresponding SideChain address. Points will be sent to the SideChain address.',
-              error: undefined,
-            },
-          };
-        });
-        return true;
-      }
-      if (isValidAddress === 'side') {
-        setAddressValid((value) => {
-          return {
-            ...value,
-            [type]: {
-              warning: undefined,
-              error: undefined,
-            },
-          };
-        });
-        return true;
-      }
-      return false;
-    } else {
-      setAddressValid((value) => {
-        return {
-          ...value,
-          [type]: {
-            warning: undefined,
-            error: 'Please enter a SideChain address on aelf.',
-          },
-        };
-      });
-      return false;
+      isValid = true;
     }
+    setAddressValid((oldValue) => {
+      return {
+        ...oldValue,
+        [type]: {
+          warning: !value
+            ? undefined
+            : isValidAddress
+            ? isValidAddress === 'main'
+              ? 'The address you entered is a MainChain address, and it has been automatically corrected to the corresponding SideChain address. Points will be sent to the SideChain address.'
+              : undefined
+            : undefined,
+          error: !value
+            ? 'This field is required.'
+            : isValidAddress
+            ? isValidAddress === 'main'
+              ? undefined
+              : undefined
+            : 'Please enter a SideChain address on aelf.',
+        },
+      };
+    });
+    return isValid;
   };
 
   const onDescriptionChange = (value: string) => {
@@ -350,7 +325,7 @@ function FormCard({ className, dappName, dappId, image }: IProps) {
   const items: MenuProps['items'] = useMemo(() => {
     return [
       {
-        key: '1',
+        key: 'MyAddress',
         label: (
           <div onClick={handleClickMyAddress}>
             <div className="text-neutralTertiary text-sm font-normal">My Address</div>
