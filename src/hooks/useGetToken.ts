@@ -12,7 +12,14 @@ import { setHasToken } from 'redux/reducer/info';
 const AElf = require('aelf-sdk');
 
 export const useGetToken = () => {
-  const { loginState, wallet, getSignature, walletType, version } = useWebLogin();
+  const {
+    loginState,
+    wallet,
+    wallet: { address },
+    getSignature,
+    walletType,
+    version,
+  } = useWebLogin();
 
   const { getSignatureAndPublicKey } = useDiscoverProvider();
 
@@ -42,12 +49,12 @@ export const useGetToken = () => {
       return false;
     }
 
-    if (accountInfo?.token && Date.now() < accountInfo?.expirationTime && accountInfo.account === wallet.address) {
+    if (accountInfo?.token && Date.now() < accountInfo?.expirationTime && accountInfo.account === address) {
       return true;
     } else {
       return false;
     }
-  }, [loginState, wallet.address]);
+  }, [loginState, address]);
 
   const getToken = useCallback(async () => {
     if (loginState !== WebLoginState.logined) return;
@@ -105,7 +112,7 @@ export const useGetToken = () => {
       publickey: publicKey,
       address: wallet.address,
     } as ITokenParams);
-  }, [loginState, getSignature, wallet]);
+  }, [loginState, wallet.address, wallet.publicKey, walletType, runAsync, getSignatureAndPublicKey, getSignature]);
 
   return { getToken, checkTokenValid };
 };

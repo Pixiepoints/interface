@@ -1,5 +1,5 @@
 import React from 'react';
-import { Table, ToolTip, Pagination } from 'aelf-design';
+import { Table, Tooltip, Pagination } from 'aelf-design';
 import type { TableColumnsType } from 'antd';
 import { ConfigProvider } from 'antd';
 import { ReactComponent as QuestionIconComp } from 'assets/images/icons/questionCircleOutlined.svg';
@@ -45,7 +45,7 @@ export function RankingTable({
       key: 'domain',
       render: (text: string) => {
         return text.length > 25 ? (
-          <ToolTip title={text}>
+          <Tooltip title={text}>
             <div className="font-medium flex items-center text-base text-brandDefault text-ellipsis">
               <a
                 target="_black"
@@ -56,7 +56,7 @@ export function RankingTable({
               </a>
               <QuestionIconComp className="w-4 h-4 md:w-0 md:h-0 ml-1 cursor-pointer" width={16} height={16} />
             </div>
-          </ToolTip>
+          </Tooltip>
         ) : (
           <div className="font-medium text-base text-brandDefault text-ellipsis">
             <a
@@ -88,9 +88,9 @@ export function RankingTable({
     {
       title: (
         <div className="flex items-center">
-          <ToolTip title="Points Earned from New User Account Creation">
+          <Tooltip title="Points Earned from New User Account Creation">
             <QuestionIconComp className="w-4 h-4 mr-1 cursor-pointer" width={16} height={16} />
-          </ToolTip>
+          </Tooltip>
           <span>XPSGR-1</span>
         </div>
       ),
@@ -107,9 +107,9 @@ export function RankingTable({
     {
       title: (
         <div className="flex items-center">
-          <ToolTip title="Perpetual Points (Auto rewards generated every second)">
+          <Tooltip title="Perpetual Points (Auto rewards generated every second)">
             <QuestionIconComp className="w-4 h-4 mr-1 cursor-pointer" width={16} height={16} />
-          </ToolTip>
+          </Tooltip>
           <span>XPSGR-2</span>
         </div>
       ),
@@ -118,15 +118,15 @@ export function RankingTable({
       sorter: true,
       width: 180,
       render: (_, item) => {
-        return <EarnAmountCount {...item} amount={item.secondSymbolAmount} />;
+        return <EarnAmountCount {...item} amount={item.secondSymbolAmount} className="text-base" />;
       },
     },
     {
       title: (
         <div className="flex items-center">
-          <ToolTip title={SGR_5_TOOL_TIP}>
+          <Tooltip title={SGR_5_TOOL_TIP}>
             <QuestionIconComp className="w-4 h-4 mr-1 cursor-pointer" width={16} height={16} />
-          </ToolTip>
+          </Tooltip>
           <span>XPSGR-5</span>
         </div>
       ),
@@ -149,6 +149,7 @@ export function RankingTable({
           <p className=" font-medium text-base text-neutralSecondary py-10 md:py-40"> No search results</p>
         )}>
         <Table
+          rowKey="domain"
           dataSource={dataSource}
           columns={columns}
           loading={loading}

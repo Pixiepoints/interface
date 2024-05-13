@@ -3,6 +3,7 @@ import { fetchRankingList } from 'api/rankingApi';
 import { useEffect, useMemo, useState } from 'react';
 import useGetDappList from 'hooks/useGetDappList';
 import { sortType } from '..';
+import { decodeAddress, getOriginalAddress } from 'utils/addressFormatting';
 
 export function useRankingService() {
   const { data, run, loading } = useRequest(fetchRankingList, {
@@ -35,6 +36,9 @@ export function useRankingService() {
     const params = Object.assign({}, sortOption, pagination, searchOpt);
     if (!params.keyword) delete params.keyword;
     if (params.keyword) {
+      if (decodeAddress(params.keyword)) {
+        params.keyword = getOriginalAddress(params.keyword);
+      }
       params.skipCount = 0;
     }
     run(params);
