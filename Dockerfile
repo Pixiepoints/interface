@@ -1,14 +1,25 @@
-FROM node:16.16.0
+FROM node:18.18.2 as base
 
-ARG web=/opt/workspace/aelf-example
+ARG web=/opt/workspace
+
+ENV NODE_OPTIONS=--max-old-space-size=4096
 
 WORKDIR ${web}
 
 COPY . ${web}
 
-RUN yarn \
-    && yarn build
+RUN yarn install --registry=https://registry.yarnpkg.com/
 
-ENTRYPOINT yarn start
+RUN yarn build
+    
+FROM node:18.17.0-alpine
 
-EXPOSE 3000
+ARG web=/opt/workspace
+
+WORKDIR ${web}
+
+COPY --from=base ${web} ${web}
+
+ENTRYPOINT yarn start -p 3004
+
+EXPOSE 3004
