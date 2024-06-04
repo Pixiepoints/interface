@@ -67,7 +67,7 @@ export default function EarnTokenList() {
     console.log('sorter', sorter, pageSize, page);
     pageSize && setPageSize(pageSize);
     page && setPageNum(page);
-    sorter && setSortField(sortType[sorter.field] || 'FirstSymbolAmount');
+    sorter && setSortField(sortType[sorter.field] || sortType.firstSymbolAmount);
     sorter && setFieldOrder(sorter.order);
   };
 
