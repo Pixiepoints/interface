@@ -110,7 +110,7 @@ export default function RankingPage() {
         }}
         onChange={({ field, order }) => {
           setFieldOrder(order);
-          setSortField(sortType[field] || sortType.firstSymbolAmount);
+          setSortField(sortType[field] || sortType.elevenSymbolAmount);
         }}
       />
     </section>
