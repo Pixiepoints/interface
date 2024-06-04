@@ -99,7 +99,7 @@ export function RankingTable({
       dataIndex: 'elevenSymbolAmount',
       key: 'elevenSymbolAmount',
       sorter: true,
-      sortDirections: ['descend', 'ascend'],
+      sortDirections: ['descend', 'ascend', 'descend'],
       render: (amount) => <EarnAmount amount={amount} />,
     },
     {
@@ -107,7 +107,7 @@ export function RankingTable({
       dataIndex: 'tenSymbolAmount',
       key: 'tenSymbolAmount',
       sorter: true,
-      sortDirections: ['descend', 'ascend'],
+      sortDirections: ['descend', 'ascend', 'descend'],
       render: (amount) => <EarnAmount amount={amount} />,
     },
     {
@@ -115,7 +115,7 @@ export function RankingTable({
       dataIndex: 'nineSymbolAmount',
       key: 'nineSymbolAmount',
       sorter: true,
-      sortDirections: ['descend', 'ascend'],
+      sortDirections: ['descend', 'ascend', 'descend'],
       render: (amount) => <EarnAmount amount={amount} />,
     },
     {
@@ -123,7 +123,7 @@ export function RankingTable({
       dataIndex: 'sixSymbolAmount',
       key: 'sixSymbolAmount',
       sorter: true,
-      sortDirections: ['descend', 'ascend'],
+      sortDirections: ['descend', 'ascend', 'descend'],
       render: (amount) => <EarnAmount amount={amount} />,
     },
     {
@@ -131,7 +131,7 @@ export function RankingTable({
       dataIndex: 'fiveSymbolAmount',
       key: 'fiveSymbolAmount',
       sorter: true,
-      sortDirections: ['descend', 'ascend'],
+      sortDirections: ['descend', 'ascend', 'descend'],
       render: (amount) => <EarnAmount amount={amount} />,
     },
     {
@@ -139,7 +139,7 @@ export function RankingTable({
       dataIndex: 'fourSymbolAmount',
       key: 'fourSymbolAmount',
       sorter: true,
-      sortDirections: ['descend', 'ascend'],
+      sortDirections: ['descend', 'ascend', 'descend'],
       render: (amount) => <EarnAmount amount={amount} />,
     },
     {
@@ -147,7 +147,7 @@ export function RankingTable({
       dataIndex: 'thirdSymbolAmount',
       key: 'thirdSymbolAmount',
       sorter: true,
-      sortDirections: ['descend', 'ascend'],
+      sortDirections: ['descend', 'ascend', 'descend'],
       render: (amount) => <EarnAmount amount={amount} />,
     },
     {
@@ -155,7 +155,7 @@ export function RankingTable({
       dataIndex: 'secondSymbolAmount',
       key: 'secondSymbolAmount',
       sorter: true,
-      sortDirections: ['descend', 'ascend'],
+      sortDirections: ['descend', 'ascend', 'descend'],
       width: 180,
       render: (_, item) => {
         return <EarnAmountCount {...item} amount={item.secondSymbolAmount} className="text-base" />;
@@ -166,7 +166,7 @@ export function RankingTable({
       dataIndex: 'firstSymbolAmount',
       key: 'firstSymbolAmount',
       sorter: true,
-      sortDirections: ['descend', 'ascend'],
+      sortDirections: ['descend', 'ascend', 'descend'],
       render: (amount) => <EarnAmount amount={amount} />,
     },
   ];
