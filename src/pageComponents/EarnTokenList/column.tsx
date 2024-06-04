@@ -89,7 +89,7 @@ export const columns: (params?: { showShareModal?: (data: IEarnToken) => void })
       dataIndex: 'elevenSymbolAmount',
       key: 'elevenSymbolAmount',
       sorter: true,
-      sortDirections: ['descend', 'ascend'],
+      sortDirections: ['descend', 'ascend', 'descend'],
       render: (amount) => <EarnAmount amount={amount} />,
     },
     {
@@ -97,7 +97,7 @@ export const columns: (params?: { showShareModal?: (data: IEarnToken) => void })
       dataIndex: 'tenSymbolAmount',
       key: 'tenSymbolAmount',
       sorter: true,
-      sortDirections: ['descend', 'ascend'],
+      sortDirections: ['descend', 'ascend', 'descend'],
       render: (amount) => <EarnAmount amount={amount} />,
     },
     {
@@ -105,7 +105,7 @@ export const columns: (params?: { showShareModal?: (data: IEarnToken) => void })
       dataIndex: 'nineSymbolAmount',
       key: 'nineSymbolAmount',
       sorter: true,
-      sortDirections: ['descend', 'ascend'],
+      sortDirections: ['descend', 'ascend', 'descend'],
       render: (amount) => <EarnAmount amount={amount} />,
     },
     {
@@ -113,7 +113,7 @@ export const columns: (params?: { showShareModal?: (data: IEarnToken) => void })
       dataIndex: 'sixSymbolAmount',
       key: 'sixSymbolAmount',
       sorter: true,
-      sortDirections: ['descend', 'ascend'],
+      sortDirections: ['descend', 'ascend', 'descend'],
       render: (amount) => <EarnAmount amount={amount} />,
     },
     {
@@ -121,7 +121,7 @@ export const columns: (params?: { showShareModal?: (data: IEarnToken) => void })
       dataIndex: 'fiveSymbolAmount',
       key: 'fiveSymbolAmount',
       sorter: true,
-      sortDirections: ['descend', 'ascend'],
+      sortDirections: ['descend', 'ascend', 'descend'],
       render: (amount) => <EarnAmount amount={amount} />,
     },
     {
@@ -129,7 +129,7 @@ export const columns: (params?: { showShareModal?: (data: IEarnToken) => void })
       dataIndex: 'fourSymbolAmount',
       key: 'fourSymbolAmount',
       sorter: true,
-      sortDirections: ['descend', 'ascend'],
+      sortDirections: ['descend', 'ascend', 'descend'],
       render: (amount) => <EarnAmount amount={amount} />,
     },
     {
@@ -137,7 +137,7 @@ export const columns: (params?: { showShareModal?: (data: IEarnToken) => void })
       dataIndex: 'thirdSymbolAmount',
       key: 'thirdSymbolAmount',
       sorter: true,
-      sortDirections: ['descend', 'ascend'],
+      sortDirections: ['descend', 'ascend', 'descend'],
       render: (amount) => <EarnAmount amount={amount} />,
     },
     {
@@ -146,7 +146,7 @@ export const columns: (params?: { showShareModal?: (data: IEarnToken) => void })
       key: 'secondSymbolAmount',
       width: 180,
       sorter: true,
-      sortDirections: ['descend', 'ascend'],
+      sortDirections: ['descend', 'ascend', 'descend'],
       render: (secondSymbolAmount, item) => (
         <EarnAmountCount {...item} amount={secondSymbolAmount} className="text-base" />
       ),
@@ -156,7 +156,7 @@ export const columns: (params?: { showShareModal?: (data: IEarnToken) => void })
       dataIndex: 'firstSymbolAmount',
       key: 'firstSymbolAmount',
       sorter: true,
-      sortDirections: ['descend', 'ascend'],
+      sortDirections: ['descend', 'ascend', 'descend'],
       render: (amount) => <EarnAmount amount={amount} />,
     },
   ];
