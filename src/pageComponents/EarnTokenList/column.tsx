@@ -10,7 +10,7 @@ import { ReactComponent as QuestionIconComp } from 'assets/images/icons/question
 import BigNumber from 'bignumber.js';
 import { EarnAmountCount } from 'pageComponents/ranking/comps/EarnAmount';
 import { RoleTypeName } from 'types/role';
-import { SGR_5_TOOL_TIP } from 'constants/index';
+import { SGR_10_TOOL_TIP, SGR_11_TOOL_TIP, SGR_3_TOOL_TIP, SGR_5_TOOL_TIP, SGR_6_TOOL_TIP } from 'constants/index';
 
 export const columns: (params?: { showShareModal?: (data: IEarnToken) => void }) => ColumnsType<IEarnToken> = ({
   showShareModal,
@@ -88,6 +88,7 @@ export const columns: (params?: { showShareModal?: (data: IEarnToken) => void })
       dataIndex: 'firstSymbolAmount',
       key: 'firstSymbolAmount',
       sorter: true,
+      sortDirections: ['descend', 'ascend'],
       render: (amount) => {
         const text = BigNumber(amount)
           .dividedBy(10 ** 8)
@@ -108,9 +109,30 @@ export const columns: (params?: { showShareModal?: (data: IEarnToken) => void })
       key: 'secondSymbolAmount',
       width: 180,
       sorter: true,
+      sortDirections: ['descend', 'ascend'],
       render: (secondSymbolAmount, item) => (
         <EarnAmountCount {...item} amount={secondSymbolAmount} className="text-base" />
       ),
+    },
+    {
+      title: (
+        <div className="flex items-center">
+          <Tooltip title={SGR_3_TOOL_TIP}>
+            <QuestionIconComp className="w-4 h-4 mr-1 cursor-pointer" width={16} height={16} />
+          </Tooltip>
+          <span>XPSGR-3</span>
+        </div>
+      ),
+      dataIndex: 'thirdSymbolAmount',
+      key: 'thirdSymbolAmount',
+      sorter: true,
+      sortDirections: ['descend', 'ascend'],
+      render: (amount) => {
+        const text = BigNumber(amount)
+          .dividedBy(10 ** 8)
+          .toNumber();
+        return <span className=" text-neutralPrimary text-base font-medium">{formatTokenPrice(text)}</span>;
+      },
     },
     {
       title: (
@@ -124,6 +146,67 @@ export const columns: (params?: { showShareModal?: (data: IEarnToken) => void })
       dataIndex: 'fiveSymbolAmount',
       key: 'fiveSymbolAmount',
       sorter: true,
+      sortDirections: ['descend', 'ascend'],
+      render: (amount) => {
+        const text = BigNumber(amount)
+          .dividedBy(10 ** 8)
+          .toNumber();
+        return <span className=" text-neutralPrimary text-base font-medium">{formatTokenPrice(text)}</span>;
+      },
+    },
+    {
+      title: (
+        <div className="flex items-center">
+          <Tooltip title={SGR_6_TOOL_TIP}>
+            <QuestionIconComp className="w-4 h-4 mr-1 cursor-pointer" width={16} height={16} />
+          </Tooltip>
+          <span>XPSGR-6</span>
+        </div>
+      ),
+      dataIndex: 'sixSymbolAmount',
+      key: 'sixSymbolAmount',
+      sorter: true,
+      sortDirections: ['descend', 'ascend'],
+      render: (amount) => {
+        const text = BigNumber(amount)
+          .dividedBy(10 ** 8)
+          .toNumber();
+        return <span className=" text-neutralPrimary text-base font-medium">{formatTokenPrice(text)}</span>;
+      },
+    },
+    {
+      title: (
+        <div className="flex items-center">
+          <Tooltip title={SGR_10_TOOL_TIP}>
+            <QuestionIconComp className="w-4 h-4 mr-1 cursor-pointer" width={16} height={16} />
+          </Tooltip>
+          <span>XPSGR-10</span>
+        </div>
+      ),
+      dataIndex: 'thirdSymbolAmount',
+      key: 'thirdSymbolAmount',
+      sorter: true,
+      sortDirections: ['descend', 'ascend'],
+      render: (amount) => {
+        const text = BigNumber(amount)
+          .dividedBy(10 ** 8)
+          .toNumber();
+        return <span className=" text-neutralPrimary text-base font-medium">{formatTokenPrice(text)}</span>;
+      },
+    },
+    {
+      title: (
+        <div className="flex items-center">
+          <Tooltip title={SGR_11_TOOL_TIP}>
+            <QuestionIconComp className="w-4 h-4 mr-1 cursor-pointer" width={16} height={16} />
+          </Tooltip>
+          <span>XPSGR-11</span>
+        </div>
+      ),
+      dataIndex: 'thirdSymbolAmount',
+      key: 'thirdSymbolAmount',
+      sorter: true,
+      sortDirections: ['descend', 'ascend'],
       render: (amount) => {
         const text = BigNumber(amount)
           .dividedBy(10 ** 8)

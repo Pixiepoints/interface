@@ -10,7 +10,7 @@ import { SorterResult } from 'antd/es/table/interface';
 import BigNumber from 'bignumber.js';
 import { formatTokenPrice } from 'utils/format';
 import { OmittedType, addPrefixSuffix, getOmittedStr } from 'utils/addressFormatting';
-import { SGR_5_TOOL_TIP } from 'constants/index';
+import { SGR_10_TOOL_TIP, SGR_11_TOOL_TIP, SGR_3_TOOL_TIP, SGR_5_TOOL_TIP, SGR_6_TOOL_TIP } from 'constants/index';
 interface IDappTableProps {
   dataSource: IRankingData[];
   loading: boolean;
@@ -97,6 +97,7 @@ export function RankingTable({
       dataIndex: 'firstSymbolAmount',
       key: 'firstSymbolAmount',
       sorter: true,
+      sortDirections: ['descend', 'ascend'],
       render: (amount) => {
         const text = BigNumber(amount)
           .dividedBy(10 ** 8)
@@ -116,9 +117,30 @@ export function RankingTable({
       dataIndex: 'secondSymbolAmount',
       key: 'secondSymbolAmount',
       sorter: true,
+      sortDirections: ['descend', 'ascend'],
       width: 180,
       render: (_, item) => {
         return <EarnAmountCount {...item} amount={item.secondSymbolAmount} className="text-base" />;
+      },
+    },
+    {
+      title: (
+        <div className="flex items-center">
+          <Tooltip title={SGR_3_TOOL_TIP}>
+            <QuestionIconComp className="w-4 h-4 mr-1 cursor-pointer" width={16} height={16} />
+          </Tooltip>
+          <span>XPSGR-3</span>
+        </div>
+      ),
+      dataIndex: 'thirdSymbolAmount',
+      key: 'thirdSymbolAmount',
+      sorter: true,
+      sortDirections: ['descend', 'ascend'],
+      render: (amount) => {
+        const text = BigNumber(amount)
+          .dividedBy(10 ** 8)
+          .toNumber();
+        return <span className=" text-neutralPrimary text-base font-medium">{formatTokenPrice(text)}</span>;
       },
     },
     {
@@ -133,6 +155,67 @@ export function RankingTable({
       dataIndex: 'fiveSymbolAmount',
       key: 'fiveSymbolAmount',
       sorter: true,
+      sortDirections: ['descend', 'ascend'],
+      render: (amount) => {
+        const text = BigNumber(amount)
+          .dividedBy(10 ** 8)
+          .toNumber();
+        return <span className=" text-neutralPrimary text-base font-medium">{formatTokenPrice(text)}</span>;
+      },
+    },
+    {
+      title: (
+        <div className="flex items-center">
+          <Tooltip title={SGR_6_TOOL_TIP}>
+            <QuestionIconComp className="w-4 h-4 mr-1 cursor-pointer" width={16} height={16} />
+          </Tooltip>
+          <span>XPSGR-6</span>
+        </div>
+      ),
+      dataIndex: 'sixSymbolAmount',
+      key: 'sixSymbolAmount',
+      sorter: true,
+      sortDirections: ['descend', 'ascend'],
+      render: (amount) => {
+        const text = BigNumber(amount)
+          .dividedBy(10 ** 8)
+          .toNumber();
+        return <span className=" text-neutralPrimary text-base font-medium">{formatTokenPrice(text)}</span>;
+      },
+    },
+    {
+      title: (
+        <div className="flex items-center">
+          <Tooltip title={SGR_10_TOOL_TIP}>
+            <QuestionIconComp className="w-4 h-4 mr-1 cursor-pointer" width={16} height={16} />
+          </Tooltip>
+          <span>XPSGR-10</span>
+        </div>
+      ),
+      dataIndex: 'thirdSymbolAmount',
+      key: 'thirdSymbolAmount',
+      sorter: true,
+      sortDirections: ['descend', 'ascend'],
+      render: (amount) => {
+        const text = BigNumber(amount)
+          .dividedBy(10 ** 8)
+          .toNumber();
+        return <span className=" text-neutralPrimary text-base font-medium">{formatTokenPrice(text)}</span>;
+      },
+    },
+    {
+      title: (
+        <div className="flex items-center">
+          <Tooltip title={SGR_11_TOOL_TIP}>
+            <QuestionIconComp className="w-4 h-4 mr-1 cursor-pointer" width={16} height={16} />
+          </Tooltip>
+          <span>XPSGR-11</span>
+        </div>
+      ),
+      dataIndex: 'thirdSymbolAmount',
+      key: 'thirdSymbolAmount',
+      sorter: true,
+      sortDirections: ['descend', 'ascend'],
       render: (amount) => {
         const text = BigNumber(amount)
           .dividedBy(10 ** 8)
