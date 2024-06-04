@@ -3,14 +3,23 @@ import { Table, Tooltip, Pagination } from 'aelf-design';
 import type { TableColumnsType } from 'antd';
 import { ConfigProvider } from 'antd';
 import { ReactComponent as QuestionIconComp } from 'assets/images/icons/questionCircleOutlined.svg';
-
-import { EarnAmountCount } from './EarnAmount';
+import { EarnAmountCount } from './EarnAmountDynamic';
 import CommonCopy from 'components/CommonCopy';
 import { SorterResult } from 'antd/es/table/interface';
-import BigNumber from 'bignumber.js';
-import { formatTokenPrice } from 'utils/format';
 import { OmittedType, addPrefixSuffix, getOmittedStr } from 'utils/addressFormatting';
-import { SGR_5_TOOL_TIP } from 'constants/index';
+import {
+  SGR_10_TOOL_TIP,
+  SGR_11_TOOL_TIP,
+  SGR_1_TOOL_TIP,
+  SGR_2_TOOL_TIP,
+  SGR_3_TOOL_TIP,
+  SGR_4_TOOL_TIP,
+  SGR_5_TOOL_TIP,
+  SGR_6_TOOL_TIP,
+  SGR_9_TOOL_TIP,
+} from 'constants/index';
+import PointsTitle from './PointsTitle';
+import EarnAmount from './EarnAmount';
 interface IDappTableProps {
   dataSource: IRankingData[];
   loading: boolean;
@@ -86,59 +95,79 @@ export function RankingTable({
       },
     },
     {
-      title: (
-        <div className="flex items-center">
-          <Tooltip title="Points Earned from New User Account Creation">
-            <QuestionIconComp className="w-4 h-4 mr-1 cursor-pointer" width={16} height={16} />
-          </Tooltip>
-          <span>XPSGR-1</span>
-        </div>
-      ),
-      dataIndex: 'firstSymbolAmount',
-      key: 'firstSymbolAmount',
+      title: <PointsTitle tip={SGR_11_TOOL_TIP} title="XPSGR-11" />,
+      dataIndex: 'elevenSymbolAmount',
+      key: 'elevenSymbolAmount',
       sorter: true,
-      render: (amount) => {
-        const text = BigNumber(amount)
-          .dividedBy(10 ** 8)
-          .toNumber();
-        return <span className=" text-neutralPrimary text-base font-medium">{formatTokenPrice(text)}</span>;
-      },
+      sortDirections: ['descend', 'ascend'],
+      render: (amount) => <EarnAmount amount={amount} />,
     },
     {
-      title: (
-        <div className="flex items-center">
-          <Tooltip title="Perpetual Points (Auto rewards generated every second)">
-            <QuestionIconComp className="w-4 h-4 mr-1 cursor-pointer" width={16} height={16} />
-          </Tooltip>
-          <span>XPSGR-2</span>
-        </div>
-      ),
+      title: <PointsTitle tip={SGR_10_TOOL_TIP} title="XPSGR-10" />,
+      dataIndex: 'tenSymbolAmount',
+      key: 'tenSymbolAmount',
+      sorter: true,
+      sortDirections: ['descend', 'ascend'],
+      render: (amount) => <EarnAmount amount={amount} />,
+    },
+    {
+      title: <PointsTitle tip={SGR_9_TOOL_TIP} title="XPSGR-9" />,
+      dataIndex: 'nineSymbolAmount',
+      key: 'nineSymbolAmount',
+      sorter: true,
+      sortDirections: ['descend', 'ascend'],
+      render: (amount) => <EarnAmount amount={amount} />,
+    },
+    {
+      title: <PointsTitle tip={SGR_6_TOOL_TIP} title="XPSGR-6" />,
+      dataIndex: 'sixSymbolAmount',
+      key: 'sixSymbolAmount',
+      sorter: true,
+      sortDirections: ['descend', 'ascend'],
+      render: (amount) => <EarnAmount amount={amount} />,
+    },
+    {
+      title: <PointsTitle tip={SGR_5_TOOL_TIP} title="XPSGR-5" />,
+      dataIndex: 'fiveSymbolAmount',
+      key: 'fiveSymbolAmount',
+      sorter: true,
+      sortDirections: ['descend', 'ascend'],
+      render: (amount) => <EarnAmount amount={amount} />,
+    },
+    {
+      title: <PointsTitle tip={SGR_4_TOOL_TIP} title="XPSGR-4" />,
+      dataIndex: 'fourSymbolAmount',
+      key: 'fourSymbolAmount',
+      sorter: true,
+      sortDirections: ['descend', 'ascend'],
+      render: (amount) => <EarnAmount amount={amount} />,
+    },
+    {
+      title: <PointsTitle tip={SGR_3_TOOL_TIP} title="XPSGR-3" />,
+      dataIndex: 'thirdSymbolAmount',
+      key: 'thirdSymbolAmount',
+      sorter: true,
+      sortDirections: ['descend', 'ascend'],
+      render: (amount) => <EarnAmount amount={amount} />,
+    },
+    {
+      title: <PointsTitle tip={SGR_2_TOOL_TIP} title="XPSGR-2" />,
       dataIndex: 'secondSymbolAmount',
       key: 'secondSymbolAmount',
       sorter: true,
+      sortDirections: ['descend', 'ascend'],
       width: 180,
       render: (_, item) => {
         return <EarnAmountCount {...item} amount={item.secondSymbolAmount} className="text-base" />;
       },
     },
     {
-      title: (
-        <div className="flex items-center">
-          <Tooltip title={SGR_5_TOOL_TIP}>
-            <QuestionIconComp className="w-4 h-4 mr-1 cursor-pointer" width={16} height={16} />
-          </Tooltip>
-          <span>XPSGR-5</span>
-        </div>
-      ),
-      dataIndex: 'fiveSymbolAmount',
-      key: 'fiveSymbolAmount',
+      title: <PointsTitle tip={SGR_1_TOOL_TIP} title="XPSGR-1" />,
+      dataIndex: 'firstSymbolAmount',
+      key: 'firstSymbolAmount',
       sorter: true,
-      render: (amount) => {
-        const text = BigNumber(amount)
-          .dividedBy(10 ** 8)
-          .toNumber();
-        return <span className=" text-neutralPrimary text-base font-medium">{formatTokenPrice(text)}</span>;
-      },
+      sortDirections: ['descend', 'ascend'],
+      render: (amount) => <EarnAmount amount={amount} />,
     },
   ];
 

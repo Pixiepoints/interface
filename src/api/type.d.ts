@@ -65,6 +65,9 @@ interface IRankingData {
   sevenSymbolAmount: number;
   eightSymbolAmount: number;
   nineSymbolAmount: number;
+  tenSymbolAmount: number;
+  elevenSymbolAmount: number;
+  twelveSymbolAmount: number;
   inviteFollowersNumber: number;
   inviteRate: number;
   thirdFollowersNumber: number;

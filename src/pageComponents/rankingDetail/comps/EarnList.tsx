@@ -1,5 +1,5 @@
 import BigNumber from 'bignumber.js';
-import { EarnAmountCount } from 'pageComponents/ranking/comps/EarnAmount';
+import { EarnAmountCount } from 'pageComponents/ranking/comps/EarnAmountDynamic';
 import { formatTokenPrice } from 'utils/format';
 
 interface IPointDetail {

@@ -1,47 +1,15 @@
-import { useTimeoutFn, useUnmount } from 'react-use';
-import { useState } from 'react';
-import { formatTokenPrice } from 'utils/format';
 import BigNumber from 'bignumber.js';
-import clsx from 'clsx';
+import { useMemo } from 'react';
+import { formatTokenPrice } from 'utils/format';
 
-interface IEarnAmountCountProps {
-  updateTime: number;
-  amount: number | string;
-  rate: number;
-  followersNumber: number;
-  inviteRate: number;
-  inviteFollowersNumber: number;
-  className?: string;
-}
-function computeAmountCount({
-  updateTime,
-  amount,
-  rate,
-  followersNumber,
-  inviteRate,
-  inviteFollowersNumber,
-}: IEarnAmountCountProps) {
-  const times = Math.floor(Math.max(0, Date.now() - updateTime) / 1000);
+export default function EarnAmount({ amount }: { amount: string | number }) {
+  const amountText = useMemo(() => {
+    return formatTokenPrice(
+      BigNumber(amount || 0)
+        .dividedBy(10 ** 8)
+        .toNumber(),
+    );
+  }, [amount]);
 
-  return BigNumber(times)
-    .times(rate)
-    .times(followersNumber)
-    .plus(BigNumber(times).times(inviteRate).times(inviteFollowersNumber))
-    .plus(BigNumber(amount).dividedBy(10 ** 8))
-    .toString();
-}
-
-export function EarnAmountCount({ className, ...props }: IEarnAmountCountProps) {
-  const [count, setCount] = useState(computeAmountCount(props));
-
-  const [, cancel, reset] = useTimeoutFn(() => {
-    setCount(computeAmountCount(props));
-    reset();
-  }, 1000);
-
-  useUnmount(() => {
-    cancel();
-  });
-
-  return <span className={clsx('font-medium text-neutralPrimary', className)}>{formatTokenPrice(count)}</span>;
+  return <span className="text-neutralPrimary text-base font-medium">{amountText}</span>;
 }
