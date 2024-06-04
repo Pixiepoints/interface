@@ -100,6 +100,7 @@ export function RankingTable({
       key: 'elevenSymbolAmount',
       sorter: true,
       sortDirections: ['descend', 'ascend', 'descend'],
+      defaultSortOrder: 'descend',
       render: (amount) => <EarnAmount amount={amount} />,
     },
     {

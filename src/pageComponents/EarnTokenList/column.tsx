@@ -90,6 +90,7 @@ export const columns: (params?: { showShareModal?: (data: IEarnToken) => void })
       key: 'elevenSymbolAmount',
       sorter: true,
       sortDirections: ['descend', 'ascend', 'descend'],
+      defaultSortOrder: 'descend',
       render: (amount) => <EarnAmount amount={amount} />,
     },
     {
