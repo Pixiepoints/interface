@@ -54,7 +54,7 @@ export default function EarnTokenList() {
       skipCount: (pageNum - 1) * pageSize,
       maxResultCount: pageSize,
       Address: wallet.address,
-      sortingKeyWord: sortField || sortType.firstSymbolAmount,
+      sortingKeyWord: sortField || sortType.elevenSymbolAmount,
       sorting: String(fieldOrder).replace('end', '').toUpperCase(),
     };
     if (!fieldOrder) {
@@ -67,7 +67,7 @@ export default function EarnTokenList() {
     console.log('sorter', sorter, pageSize, page);
     pageSize && setPageSize(pageSize);
     page && setPageNum(page);
-    sorter && setSortField(sortType[sorter.field] || 'FirstSymbolAmount');
+    sorter && setSortField(sortType[sorter.field] || sortType.elevenSymbolAmount);
     sorter && setFieldOrder(sorter.order);
   };
 
