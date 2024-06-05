@@ -1,14 +1,12 @@
 import { useRequest } from 'ahooks';
 import { fetchRankingList } from 'api/rankingApi';
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import useGetDappList from 'hooks/useGetDappList';
 import { sortType } from '..';
 import { decodeAddress, getOriginalAddress } from 'utils/addressFormatting';
 
 export function useRankingService() {
   const { data, run, loading } = useRequest(fetchRankingList, {
-    debounceWait: 300,
-    debounceLeading: true,
     manual: true,
     pollingInterval: 1000 * 60,
   });
@@ -19,10 +17,10 @@ export function useRankingService() {
   const [keyword, setKeyWord] = useState<string>('');
   const [currentPageSize, setCurrentPageSize] = useState<number>(10);
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const [sortField, setSortField] = useState<string>(sortType.firstSymbolAmount);
+  const [sortField, setSortField] = useState<string>(sortType.elevenSymbolAmount);
   const [fieldOrder, setFieldOrder] = useState<string>();
 
-  const onSearch = () => {
+  const onSearch = useCallback(() => {
     const pageNumber = currentPageSize;
     const sortOption = !fieldOrder
       ? { sortingKeyWord: sortField }
@@ -42,7 +40,7 @@ export function useRankingService() {
       params.skipCount = 0;
     }
     run(params);
-  };
+  }, [currentPage, currentPageSize, dappName, fieldOrder, keyword, run, sortField]);
 
   const onRefresh = () => {
     onSearch();
@@ -50,7 +48,7 @@ export function useRankingService() {
 
   useEffect(() => {
     onSearch();
-  }, [keyword, dappName, currentPageSize, currentPage, fieldOrder]);
+  }, [onSearch]);
 
   useEffect(() => {
     setCurrentPage(1);
@@ -61,7 +59,7 @@ export function useRankingService() {
       item.rank = (currentPage - 1) * currentPageSize + index + 1;
       return item;
     });
-  }, [data]);
+  }, [currentPage, currentPageSize, data?.items]);
 
   useEffect(() => {
     dappList?.length && setDappName(dappList[0].dappId);
