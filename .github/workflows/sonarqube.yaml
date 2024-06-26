@@ -1,0 +1,21 @@
+on:
+  pull_request:
+    types: [opened, synchronize, reopened]
+
+name: PR Static Code Analysis
+jobs:
+  static-code-analysis:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Code Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: SonarQube Scan
+        uses: sonarsource/sonarqube-scan-action@v2.1.0
+        env:
+          SONAR_TOKEN: sqp_07253ce4806115c978236c93ec22dfbf4b524312
+          SONAR_HOST_URL: https://sonarqube.ops.aelf.dev
+        with:
+          args: >
+            -Dsonar.projectKey=ecoearn-interface
