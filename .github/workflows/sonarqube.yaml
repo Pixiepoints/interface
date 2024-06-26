@@ -18,4 +18,4 @@ jobs:
           SONAR_HOST_URL: https://sonarqube.ops.aelf.dev
         with:
           args: >
-            -Dsonar.projectKey=ecoearn-interface
+            -Dsonar.projectKey=pixiepoints-interface
