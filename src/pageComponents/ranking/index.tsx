@@ -18,9 +18,12 @@ export enum sortType {
   'fourSymbolAmount' = 'FourSymbolAmount',
   'fiveSymbolAmount' = 'FiveSymbolAmount',
   'sixSymbolAmount' = 'SixSymbolAmount',
+  'sevenSymbolAmount' = 'SevenSymbolAmount',
+  'eightSymbolAmount' = 'EightSymbolAmount',
   'nineSymbolAmount' = 'NineSymbolAmount',
   'tenSymbolAmount' = 'TenSymbolAmount',
   'elevenSymbolAmount' = 'ElevenSymbolAmount',
+  'twelveSymbolAmount' = 'TwelveSymbolAmount',
 }
 
 export default function RankingPage() {
@@ -110,7 +113,7 @@ export default function RankingPage() {
         }}
         onChange={({ field, order }) => {
           setFieldOrder(order);
-          setSortField(sortType[field] || sortType.elevenSymbolAmount);
+          setSortField(sortType[field] || sortType.twelveSymbolAmount);
         }}
       />
     </section>

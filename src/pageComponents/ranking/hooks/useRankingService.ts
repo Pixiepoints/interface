@@ -17,7 +17,7 @@ export function useRankingService() {
   const [keyword, setKeyWord] = useState<string>('');
   const [currentPageSize, setCurrentPageSize] = useState<number>(10);
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const [sortField, setSortField] = useState<string>(sortType.elevenSymbolAmount);
+  const [sortField, setSortField] = useState<string>(sortType.twelveSymbolAmount);
   const [fieldOrder, setFieldOrder] = useState<string>();
 
   const onSearch = useCallback(() => {
