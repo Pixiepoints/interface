@@ -1,4 +1,4 @@
-import { Row, Col, TablePaginationConfig } from 'antd';
+import { Row, Col } from 'antd';
 import { useRouter } from 'next/navigation';
 import CommonSelect from 'components/CommonSelect';
 import { Pagination, Table } from 'aelf-design';
@@ -17,7 +17,6 @@ import { useRequest, useTimeout } from 'ahooks';
 import { fetchEarnTokenList } from 'api/rankingApi';
 import { useWebLogin } from 'aelf-web-login';
 import SkeletonImage from 'components/SkeletonImage';
-import { sortType } from 'pageComponents/ranking';
 
 export default function EarnTokenList() {
   const [dappName, setDappName] = useState<string>('');
@@ -34,6 +33,14 @@ export default function EarnTokenList() {
   const [sortField, setSortField] = useState<string>();
   const [fieldOrder, setFieldOrder] = useState<string>();
 
+  const selectValue = useMemo(() => {
+    return dappList?.filter((item) => item?.dappId === dappName)?.[0];
+  }, [dappList, dappName]);
+
+  const defaultSortField = useMemo(() => {
+    return selectValue?.rankingColumns?.find((item) => !!item?.defaultSortOrder)?.sortingKeyWord;
+  }, [selectValue?.rankingColumns]);
+
   const {
     data: tokenList,
     loading,
@@ -45,7 +52,7 @@ export default function EarnTokenList() {
   const router = useRouter();
 
   const getTokenList = useCallback(() => {
-    if (!dappName || typeof role === 'undefined' || !wallet.address) {
+    if (!dappName || typeof role === 'undefined' || !wallet.address || !sortField) {
       return;
     }
     const params: IEarnListParams = {
@@ -54,21 +61,23 @@ export default function EarnTokenList() {
       skipCount: (pageNum - 1) * pageSize,
       maxResultCount: pageSize,
       Address: wallet.address,
-      sortingKeyWord: sortField || sortType.elevenSymbolAmount,
+      sortingKeyWord: sortField || defaultSortField,
       sorting: String(fieldOrder).replace('end', '').toUpperCase(),
     };
     if (!fieldOrder) {
       delete params.sorting;
     }
     getEarnTokenList(params);
-  }, [dappName, getEarnTokenList, pageNum, pageSize, sortField, fieldOrder, role, wallet.address]);
+  }, [dappName, defaultSortField, fieldOrder, getEarnTokenList, pageNum, pageSize, role, sortField, wallet.address]);
 
   const handleTableChange = ({ pageSize, page }: any, _, sorter) => {
     console.log('sorter', sorter, pageSize, page);
     pageSize && setPageSize(pageSize);
     page && setPageNum(page);
-    sorter && setSortField(sortType[sorter.field] || sortType.elevenSymbolAmount);
-    sorter && setFieldOrder(sorter.order);
+    const { field, order } = sorter;
+    const sortField = selectValue?.rankingColumns?.find((item) => item?.dataIndex === field)?.sortingKeyWord;
+    sorter && setSortField(sortField || defaultSortField);
+    sorter && setFieldOrder(order);
   };
 
   const renderDappListOptions = useMemo(() => {
@@ -79,7 +88,7 @@ export default function EarnTokenList() {
           <Col className="hidden md:block">
             <SkeletonImage img={item.icon} className="w-[40px] h-[40px]" />
           </Col>
-          <Col className="text-base text-neutralPrimar font-medium">{item.dappName}</Col>
+          <Col className="text-base text-neutralPrimary font-medium">{item.dappName}</Col>
         </Row>
       ),
     }));
@@ -107,12 +116,27 @@ export default function EarnTokenList() {
     });
   };
 
+  const pointsColumns = useMemo(() => {
+    return selectValue?.rankingColumns?.map((item) => {
+      return {
+        dataIndex: item?.dataIndex,
+        title: item?.label || '',
+        defaultSortOrder: item?.defaultSortOrder || undefined,
+        tipText: item?.tipText,
+      };
+    });
+  }, [selectValue?.rankingColumns]);
+
   useEffect(() => {
     if (!dappList?.length) {
       return;
     }
     setDappName(dappList[0].dappId);
   }, [dappList]);
+
+  useEffect(() => {
+    defaultSortField && setSortField(defaultSortField);
+  }, [defaultSortField]);
 
   useEffect(() => {
     if (!roleList?.length) {
@@ -160,7 +184,7 @@ export default function EarnTokenList() {
         </Col>
         <Col span={24}>
           <Table
-            columns={columns({ showShareModal })}
+            columns={columns({ showShareModal, pointsColumns })}
             scroll={{
               x: 'max-content',
             }}

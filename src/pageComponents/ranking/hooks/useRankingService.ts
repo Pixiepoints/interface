@@ -2,7 +2,6 @@ import { useRequest } from 'ahooks';
 import { fetchRankingList } from 'api/rankingApi';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import useGetDappList from 'hooks/useGetDappList';
-import { sortType } from '..';
 import { decodeAddress, getOriginalAddress } from 'utils/addressFormatting';
 
 export function useRankingService() {
@@ -17,10 +16,19 @@ export function useRankingService() {
   const [keyword, setKeyWord] = useState<string>('');
   const [currentPageSize, setCurrentPageSize] = useState<number>(10);
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const [sortField, setSortField] = useState<string>(sortType.elevenSymbolAmount);
+  const [sortField, setSortField] = useState<string>();
   const [fieldOrder, setFieldOrder] = useState<string>();
 
+  const selectValue = useMemo(() => {
+    return dappList?.filter((item) => item?.dappId === dappName)?.[0];
+  }, [dappList, dappName]);
+
+  const defaultSortField = useMemo(() => {
+    return selectValue?.rankingColumns?.find((item) => !!item?.defaultSortOrder)?.sortingKeyWord;
+  }, [selectValue?.rankingColumns]);
+
   const onSearch = useCallback(() => {
+    if (!sortField) return;
     const pageNumber = currentPageSize;
     const sortOption = !fieldOrder
       ? { sortingKeyWord: sortField }
@@ -65,6 +73,30 @@ export function useRankingService() {
     dappList?.length && setDappName(dappList[0].dappId);
   }, [dappList]);
 
+  const pointsColumns = useMemo(() => {
+    return selectValue?.rankingColumns?.map((item) => {
+      return {
+        dataIndex: item?.dataIndex,
+        title: item?.label || '',
+        defaultSortOrder: item?.defaultSortOrder || undefined,
+        tipText: item?.tipText,
+      };
+    });
+  }, [selectValue?.rankingColumns]);
+
+  const onChange = useCallback(
+    ({ field, order }) => {
+      setFieldOrder(order);
+      const sortField = selectValue?.rankingColumns?.find((item) => item?.dataIndex === field)?.sortingKeyWord;
+      setSortField(sortField || defaultSortField);
+    },
+    [defaultSortField, selectValue?.rankingColumns],
+  );
+
+  useEffect(() => {
+    defaultSortField && setSortField(defaultSortField);
+  }, [defaultSortField]);
+
   return {
     dappList,
     rankList,
@@ -81,5 +113,8 @@ export function useRankingService() {
     setCurrentPage,
     currentPageSize,
     setCurrentPageSize,
+    selectValue,
+    pointsColumns,
+    onChange,
   };
 }

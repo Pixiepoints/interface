@@ -21,6 +21,7 @@ export enum sortType {
   'nineSymbolAmount' = 'NineSymbolAmount',
   'tenSymbolAmount' = 'TenSymbolAmount',
   'elevenSymbolAmount' = 'ElevenSymbolAmount',
+  'twelveSymbolAmount' = 'TwelveSymbolAmount',
 }
 
 export default function RankingPage() {
@@ -35,12 +36,12 @@ export default function RankingPage() {
     setDappName,
     setKeyWord,
     onRefresh,
-    setSortField,
-    setFieldOrder,
     currentPage,
     currentPageSize,
     setCurrentPage,
     setCurrentPageSize,
+    onChange,
+    pointsColumns,
   } = useRankingService();
 
   const renderDappListOptions = useMemo(() => {
@@ -94,6 +95,7 @@ export default function RankingPage() {
       </div>
 
       <RankingTable
+        pointsColumn={pointsColumns}
         dataSource={rankList}
         loading={loading}
         totalCount={totalCount}
@@ -108,10 +110,7 @@ export default function RankingPage() {
           page && setCurrentPage(page);
           pageSize && setCurrentPageSize(pageSize);
         }}
-        onChange={({ field, order }) => {
-          setFieldOrder(order);
-          setSortField(sortType[field] || sortType.elevenSymbolAmount);
-        }}
+        onChange={onChange}
       />
     </section>
   );

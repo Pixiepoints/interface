@@ -4,25 +4,16 @@ import CommonCopy from 'components/CommonCopy';
 import SkeletonImage from 'components/SkeletonImage';
 import { IEarnToken } from 'types/earnToke';
 import { OpenLink } from 'assets/images/icons/index';
-import { EarnAmountCount } from 'pageComponents/ranking/comps/EarnAmountDynamic';
 import { RoleTypeName } from 'types/role';
-import {
-  SGR_10_TOOL_TIP,
-  SGR_11_TOOL_TIP,
-  SGR_1_TOOL_TIP,
-  SGR_2_TOOL_TIP,
-  SGR_3_TOOL_TIP,
-  SGR_4_TOOL_TIP,
-  SGR_5_TOOL_TIP,
-  SGR_6_TOOL_TIP,
-  SGR_9_TOOL_TIP,
-} from 'constants/index';
 import PointsTitle from 'pageComponents/ranking/comps/PointsTitle';
+import { SortOrder } from 'antd/es/table/interface';
+import { EarnAmountCount } from 'pageComponents/ranking/comps/EarnAmountDynamic';
 import EarnAmount from 'pageComponents/ranking/comps/EarnAmount';
 
-export const columns: (params?: { showShareModal?: (data: IEarnToken) => void }) => ColumnsType<IEarnToken> = ({
-  showShareModal,
-}) => {
+export const columns: (params?: {
+  showShareModal?: (data: IEarnToken) => void;
+  pointsColumns: Array<any>;
+}) => ColumnsType<IEarnToken> = ({ showShareModal, pointsColumns }) => {
   return [
     {
       title: 'dApp',
@@ -71,94 +62,24 @@ export const columns: (params?: { showShareModal?: (data: IEarnToken) => void })
       dataIndex: 'role',
       render: (role: number) => <span className="text-neutralPrimar text-base font-medium">{RoleTypeName[role]}</span>,
     },
-    // {
-    //   title: 'Wallet Address for Receiving Points',
-    //   width: 320,
-    //   key: 'address',
-    //   dataIndex: 'address',
-    //   render: (address: string) => (
-    //     <CommonCopy type="black" toCopy={addPrefixSuffix(address)}>
-    //       <span className=" text-neutralPrimar text-base font-medium">
-    //         {getOmittedStr(addPrefixSuffix(address), OmittedType.ADDRESS)}
-    //       </span>
-    //     </CommonCopy>
-    //   ),
-    // },
-    {
-      title: <PointsTitle title="XPSGR-11" tip={SGR_11_TOOL_TIP} />,
-      dataIndex: 'elevenSymbolAmount',
-      key: 'elevenSymbolAmount',
-      sorter: true,
-      sortDirections: ['descend', 'ascend', 'descend'],
-      defaultSortOrder: 'descend',
-      render: (amount) => <EarnAmount amount={amount} />,
-    },
-    {
-      title: <PointsTitle title="XPSGR-10" tip={SGR_10_TOOL_TIP} />,
-      dataIndex: 'tenSymbolAmount',
-      key: 'tenSymbolAmount',
-      sorter: true,
-      sortDirections: ['descend', 'ascend', 'descend'],
-      render: (amount) => <EarnAmount amount={amount} />,
-    },
-    {
-      title: <PointsTitle title="XPSGR-9" tip={SGR_9_TOOL_TIP} />,
-      dataIndex: 'nineSymbolAmount',
-      key: 'nineSymbolAmount',
-      sorter: true,
-      sortDirections: ['descend', 'ascend', 'descend'],
-      render: (amount) => <EarnAmount amount={amount} />,
-    },
-    {
-      title: <PointsTitle title="XPSGR-6" tip={SGR_6_TOOL_TIP} />,
-      dataIndex: 'sixSymbolAmount',
-      key: 'sixSymbolAmount',
-      sorter: true,
-      sortDirections: ['descend', 'ascend', 'descend'],
-      render: (amount) => <EarnAmount amount={amount} />,
-    },
-    {
-      title: <PointsTitle title="XPSGR-5" tip={SGR_5_TOOL_TIP} />,
-      dataIndex: 'fiveSymbolAmount',
-      key: 'fiveSymbolAmount',
-      sorter: true,
-      sortDirections: ['descend', 'ascend', 'descend'],
-      render: (amount) => <EarnAmount amount={amount} />,
-    },
-    {
-      title: <PointsTitle title="XPSGR-4" tip={SGR_4_TOOL_TIP} />,
-      dataIndex: 'fourSymbolAmount',
-      key: 'fourSymbolAmount',
-      sorter: true,
-      sortDirections: ['descend', 'ascend', 'descend'],
-      render: (amount) => <EarnAmount amount={amount} />,
-    },
-    {
-      title: <PointsTitle title="XPSGR-3" tip={SGR_3_TOOL_TIP} />,
-      dataIndex: 'thirdSymbolAmount',
-      key: 'thirdSymbolAmount',
-      sorter: true,
-      sortDirections: ['descend', 'ascend', 'descend'],
-      render: (amount) => <EarnAmount amount={amount} />,
-    },
-    {
-      title: <PointsTitle title="XPSGR-2" tip={SGR_2_TOOL_TIP} />,
-      dataIndex: 'secondSymbolAmount',
-      key: 'secondSymbolAmount',
-      width: 180,
-      sorter: true,
-      sortDirections: ['descend', 'ascend', 'descend'],
-      render: (secondSymbolAmount, item) => (
-        <EarnAmountCount {...item} amount={secondSymbolAmount} className="text-base" />
-      ),
-    },
-    {
-      title: <PointsTitle title="XPSGR-1" tip={SGR_1_TOOL_TIP} />,
-      dataIndex: 'firstSymbolAmount',
-      key: 'firstSymbolAmount',
-      sorter: true,
-      sortDirections: ['descend', 'ascend', 'descend'],
-      render: (amount) => <EarnAmount amount={amount} />,
-    },
-  ];
+  ].concat(
+    pointsColumns?.map((item) => {
+      return {
+        title: <PointsTitle tip={item?.tipText} title={item?.title} />,
+        dataIndex: item?.dataIndex,
+        key: item?.dataIndex,
+        sorter: true,
+        width: item?.dataIndex === 'secondSymbolAmount' ? 180 : undefined,
+        sortDirections: ['descend', 'ascend', 'descend'] as SortOrder[],
+        defaultSortOrder: (item?.defaultSortOrder || undefined) as SortOrder,
+        render: (amount, data) => {
+          return item?.dataIndex === 'secondSymbolAmount' ? (
+            <EarnAmountCount {...data} amount={amount} className="text-base" />
+          ) : (
+            <EarnAmount amount={amount} />
+          );
+        },
+      } as any;
+    }) || [],
+  );
 };
