@@ -1,5 +1,5 @@
-import { Row, Col, TablePaginationConfig } from 'antd';
-import { useRouter } from 'next/navigation';
+import { Row, Col } from 'antd';
+import { usePathname, useRouter, useSearchParams } from 'next/navigation';
 import CommonSelect from 'components/CommonSelect';
 import { Pagination, Table } from 'aelf-design';
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -17,7 +17,6 @@ import { useRequest, useTimeout } from 'ahooks';
 import { fetchEarnTokenList } from 'api/rankingApi';
 import { useWebLogin } from 'aelf-web-login';
 import SkeletonImage from 'components/SkeletonImage';
-import { sortType } from 'pageComponents/ranking';
 
 export default function EarnTokenList() {
   const [dappName, setDappName] = useState<string>('');
@@ -27,12 +26,25 @@ export default function EarnTokenList() {
   const { isOK } = useCheckLoginAndToken();
   const resultModal = useModal(ResultModal);
   const { wallet } = useWebLogin();
-
   const dappList = useGetDappList({ dappName: '' });
   const roleList: RoleResult = useGetRoleList();
-
   const [sortField, setSortField] = useState<string>();
   const [fieldOrder, setFieldOrder] = useState<string>();
+  const router = useRouter();
+  const searchParams = useSearchParams();
+  const pathName = usePathname();
+
+  const selectValue = useMemo(() => {
+    return dappList?.filter((item) => item?.dappId === dappName)?.[0];
+  }, [dappList, dappName]);
+
+  const defaultSortField = useMemo(() => {
+    return (
+      selectValue?.rankingColumns?.find((item) => !!item?.defaultSortOrder)?.sortingKeyWord ||
+      selectValue?.rankingColumns?.[0].sortingKeyWord ||
+      ''
+    );
+  }, [selectValue?.rankingColumns]);
 
   const {
     data: tokenList,
@@ -42,7 +54,13 @@ export default function EarnTokenList() {
     manual: true,
   });
 
-  const router = useRouter();
+  useEffect(() => {
+    if (dappName) {
+      setSortField(undefined);
+      setFieldOrder(undefined);
+      setPageNum(1);
+    }
+  }, [dappName]);
 
   const getTokenList = useCallback(() => {
     if (!dappName || typeof role === 'undefined' || !wallet.address) {
@@ -54,21 +72,23 @@ export default function EarnTokenList() {
       skipCount: (pageNum - 1) * pageSize,
       maxResultCount: pageSize,
       Address: wallet.address,
-      sortingKeyWord: sortField || sortType.twelveSymbolAmount,
+      sortingKeyWord: sortField || defaultSortField,
       sorting: String(fieldOrder).replace('end', '').toUpperCase(),
     };
     if (!fieldOrder) {
       delete params.sorting;
     }
     getEarnTokenList(params);
-  }, [dappName, getEarnTokenList, pageNum, pageSize, sortField, fieldOrder, role, wallet.address]);
+  }, [dappName, defaultSortField, fieldOrder, getEarnTokenList, pageNum, pageSize, role, sortField, wallet.address]);
 
   const handleTableChange = ({ pageSize, page }: any, _, sorter) => {
     console.log('sorter', sorter, pageSize, page);
     pageSize && setPageSize(pageSize);
     page && setPageNum(page);
-    sorter && setSortField(sortType[sorter.field] || sortType.twelveSymbolAmount);
-    sorter && setFieldOrder(sorter.order);
+    const { field, order } = sorter || {};
+    const sortField = selectValue?.rankingColumns?.find((item) => item?.dataIndex === field)?.sortingKeyWord;
+    sorter && setSortField(sortField || defaultSortField);
+    sorter && setFieldOrder(order);
   };
 
   const renderDappListOptions = useMemo(() => {
@@ -79,7 +99,7 @@ export default function EarnTokenList() {
           <Col className="hidden md:block">
             <SkeletonImage img={item.icon} className="w-[40px] h-[40px]" />
           </Col>
-          <Col className="text-base text-neutralPrimar font-medium">{item.dappName}</Col>
+          <Col className="text-base text-neutralPrimary font-medium">{item.dappName}</Col>
         </Row>
       ),
     }));
@@ -107,12 +127,42 @@ export default function EarnTokenList() {
     });
   };
 
+  const pointsColumns = useMemo(() => {
+    return selectValue?.rankingColumns?.map((item) => {
+      return {
+        dataIndex: item?.dataIndex,
+        title: item?.label || '',
+        defaultSortOrder: item?.defaultSortOrder || undefined,
+        tipText: item?.tipText,
+        supportsSelfIncrease: item?.supportsSelfIncrease,
+      };
+    });
+  }, [selectValue?.rankingColumns]);
+
+  const onChange = useCallback(
+    (value: string) => {
+      const dappName = dappList?.find((item) => item?.dappId === value)?.dappName;
+      const params = new URLSearchParams(searchParams.toString());
+      params.set('dappName', decodeURIComponent(dappName));
+      router.replace(`${pathName}?${params.toString()}`);
+    },
+    [dappList, pathName, router, searchParams],
+  );
+
   useEffect(() => {
     if (!dappList?.length) {
       return;
     }
-    setDappName(dappList[0].dappId);
-  }, [dappList]);
+    const defaultDappName = searchParams.get('dappName');
+    const defaultDappInfo = defaultDappName
+      ? dappList.find((item) => item?.dappName === decodeURIComponent(defaultDappName))
+      : null;
+    if (defaultDappName && defaultDappInfo) {
+      setDappName(defaultDappInfo.dappId);
+      return;
+    }
+    setDappName(dappList?.[0]?.dappId || '');
+  }, [dappList, searchParams]);
 
   useEffect(() => {
     if (!roleList?.length) {
@@ -123,7 +173,7 @@ export default function EarnTokenList() {
 
   useEffect(() => {
     getTokenList();
-  }, [dappName, getTokenList, role, pageNum, pageSize, fieldOrder, sortField]);
+  }, [getTokenList]);
 
   useTimeout(() => {
     if (!isOK) {
@@ -147,7 +197,7 @@ export default function EarnTokenList() {
           },
         ]}>
         <Col span={12}>
-          <CommonSelect subfix="dApp" options={renderDappListOptions} onChange={setDappName} value={dappName} />
+          <CommonSelect subfix="dApp" options={renderDappListOptions} onChange={onChange} value={dappName} />
         </Col>
         <Col span={12}>
           <CommonSelect
@@ -160,7 +210,7 @@ export default function EarnTokenList() {
         </Col>
         <Col span={24}>
           <Table
-            columns={columns({ showShareModal })}
+            columns={columns({ showShareModal, pointsColumns })}
             scroll={{
               x: 'max-content',
             }}

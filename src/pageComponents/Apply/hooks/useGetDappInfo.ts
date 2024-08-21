@@ -1,9 +1,9 @@
 import { fetchDAppList } from 'api/homeApi';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 export const useGetDappInfo = (dappName: string) => {
   const [dappInfo, setDappInfo] = useState<IDappListData>();
-  const getDappInfo = async () => {
+  const getDappInfo = useCallback(async () => {
     try {
       const res = await fetchDAppList({
         dappName,
@@ -12,11 +12,11 @@ export const useGetDappInfo = (dappName: string) => {
     } catch (error) {
       setDappInfo(undefined);
     }
-  };
+  }, [dappName]);
 
   useEffect(() => {
     getDappInfo();
-  }, [dappName]);
+  }, [getDappInfo]);
 
   return { dappInfo, getDappInfo };
 };

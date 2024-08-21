@@ -30,7 +30,7 @@ export default function WebsiteDetail({ data }: IWebsiteDetailProps) {
     if (!data.addressInfo) return;
     const address = data.addressInfo.address;
     return addPrefixSuffix(address, config.curChain);
-  }, [data]);
+  }, [config.curChain, data.addressInfo]);
 
   return (
     <section className="rounded-xl p-[16px] md:p-[40px] bg-[var(--neutral-hover-bg)]">
