@@ -104,6 +104,7 @@ export function DropMenuMy({ isMobile }: IDropMenuMy) {
     () => (
       <Button
         type="primary"
+        className="!text-brandDefault !border-brandDefault"
         ghost
         size={isMobile ? 'small' : 'large'}
         onClick={() => setShowDropMenu(true)}

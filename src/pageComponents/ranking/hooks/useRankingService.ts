@@ -2,7 +2,6 @@ import { useRequest } from 'ahooks';
 import { fetchRankingList } from 'api/rankingApi';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import useGetDappList from 'hooks/useGetDappList';
-import { sortType } from '..';
 import { decodeAddress, getOriginalAddress } from 'utils/addressFormatting';
 
 export function useRankingService() {
@@ -17,14 +16,26 @@ export function useRankingService() {
   const [keyword, setKeyWord] = useState<string>('');
   const [currentPageSize, setCurrentPageSize] = useState<number>(10);
   const [currentPage, setCurrentPage] = useState<number>(1);
-  const [sortField, setSortField] = useState<string>(sortType.twelveSymbolAmount);
+  const [sortField, setSortField] = useState<string>();
   const [fieldOrder, setFieldOrder] = useState<string>();
+
+  const selectValue = useMemo(() => {
+    return dappList?.filter((item) => item?.dappId === dappName)?.[0];
+  }, [dappList, dappName]);
+
+  const defaultSortField = useMemo(() => {
+    return (
+      selectValue?.rankingColumns?.find((item) => !!item?.defaultSortOrder)?.sortingKeyWord ||
+      selectValue?.rankingColumns?.[0]?.sortingKeyWord ||
+      ''
+    );
+  }, [selectValue?.rankingColumns]);
 
   const onSearch = useCallback(() => {
     const pageNumber = currentPageSize;
     const sortOption = !fieldOrder
-      ? { sortingKeyWord: sortField }
-      : { sortingKeyWord: sortField, sorting: String(fieldOrder).replace('end', '').toUpperCase() };
+      ? { sortingKeyWord: sortField || defaultSortField }
+      : { sortingKeyWord: sortField || defaultSortField, sorting: String(fieldOrder).replace('end', '').toUpperCase() };
     const pagination = {
       skipCount: (currentPage - 1) * pageNumber,
       maxResultCount: pageNumber,
@@ -40,7 +51,7 @@ export function useRankingService() {
       params.skipCount = 0;
     }
     run(params);
-  }, [currentPage, currentPageSize, dappName, fieldOrder, keyword, run, sortField]);
+  }, [currentPage, currentPageSize, dappName, defaultSortField, fieldOrder, keyword, run, sortField]);
 
   const onRefresh = () => {
     onSearch();
@@ -65,6 +76,35 @@ export function useRankingService() {
     dappList?.length && setDappName(dappList[0].dappId);
   }, [dappList]);
 
+  const pointsColumns = useMemo(() => {
+    return selectValue?.rankingColumns?.map((item) => {
+      return {
+        dataIndex: item?.dataIndex,
+        title: item?.label || '',
+        defaultSortOrder: item?.defaultSortOrder || undefined,
+        tipText: item?.tipText,
+        supportsSelfIncrease: item?.supportsSelfIncrease,
+      };
+    });
+  }, [selectValue?.rankingColumns]);
+
+  const onChange = useCallback(
+    ({ field, order }) => {
+      setFieldOrder(order);
+      const sortField = selectValue?.rankingColumns?.find((item) => item?.dataIndex === field)?.sortingKeyWord;
+      setSortField(sortField || defaultSortField);
+    },
+    [defaultSortField, selectValue?.rankingColumns],
+  );
+
+  useEffect(() => {
+    if (dappName) {
+      setSortField(undefined);
+      setFieldOrder(undefined);
+      setCurrentPage(1);
+    }
+  }, [dappName]);
+
   return {
     dappList,
     rankList,
@@ -81,5 +121,8 @@ export function useRankingService() {
     setCurrentPage,
     currentPageSize,
     setCurrentPageSize,
+    selectValue,
+    pointsColumns,
+    onChange,
   };
 }

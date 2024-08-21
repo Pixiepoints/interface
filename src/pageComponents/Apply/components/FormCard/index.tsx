@@ -18,7 +18,7 @@ import { getWalletInfo } from 'redux/reducer/userInfo';
 import { getConfig } from 'redux/reducer/info';
 import { getRpcUrls } from 'constants/url';
 import { addPrefixSuffix, decodeAddress, getOriginalAddress } from 'utils/addressFormatting';
-import { useRouter } from 'next/navigation';
+import { useParams, useRouter } from 'next/navigation';
 import useGetStoreInfo from 'redux/hooks/useGetStoreInfo';
 import useLoading from 'hooks/useLoading';
 import { useWindowSize } from 'react-use';
@@ -30,6 +30,7 @@ interface IProps {
   dappName: string;
   dappId: string;
   image?: string | StaticImageData;
+  suffix: string;
 }
 
 enum AddressType {
@@ -37,7 +38,7 @@ enum AddressType {
   receive = 'receive',
 }
 
-function FormCard({ className, dappName, dappId, image }: IProps) {
+function FormCard({ className, dappName, dappId, image, suffix }: IProps) {
   const { isMD } = useResponsive();
   const promptModal = useModal(PromptModal);
   const resultModal = useModal(ResultModal);
@@ -48,10 +49,11 @@ function FormCard({ className, dappName, dappId, image }: IProps) {
   const walletInfo = useSelector(getWalletInfo);
   const { walletType, wallet, isLogin } = useWalletService();
   const config = useSelector(getConfig);
-  const { domain: domainSuffix } = config;
   const router = useRouter();
   const { showLoading } = useLoading();
   const { width } = useWindowSize();
+
+  const domainSuffix = useMemo(() => '.' + suffix, [suffix]);
 
   const inviteInputRef = useRef<InputRef>();
   const inviteInputContainerRef = useRef<HTMLDivElement>();
@@ -215,7 +217,7 @@ function FormCard({ className, dappName, dappId, image }: IProps) {
       onCancel: () => {
         resultModal.hide();
         if (status === Status.SUCCESS) {
-          router.push('/earn-token');
+          router.push(`/earn-token?dappName=${dappName}`);
         }
       },
       hideButton: status === Status.SUCCESS,

@@ -23,7 +23,7 @@
         }
       }
       :global(.aelfd-modal-header) {
-        @apply px-4 py-4 md:px-8 md:py-8 rounded-none border-b-0 bg-neutralWhiteBg;
+        @apply px-4 py-4 md:px-8 md:py-8 rounded-none border-b-0 bg-neutralWhiteBg mb-0;
         :global(.aelfd-modal-title) {
           @apply text-xl min-h-[28px] md:text-2xl text-neutralPrimary font-semibold;
         }
