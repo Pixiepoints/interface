@@ -38,23 +38,23 @@ export default function RankingPage() {
     setDappName,
     setKeyWord,
     onRefresh,
-    setSortField,
-    setFieldOrder,
     currentPage,
     currentPageSize,
     setCurrentPage,
     setCurrentPageSize,
+    onChange,
+    pointsColumns,
   } = useRankingService();
 
   const renderDappListOptions = useMemo(() => {
     return dappList?.map((item) => ({
       value: item.dappId,
       label: (
-        <Row gutter={[24, 0]} align="middle">
+        <Row gutter={[24, 0]} align="middle" wrap={false}>
           <Col className="hidden md:block">
             <img src={item.icon} className="w-[40px] h-[40px] rounded-sm" width={40} height={40} />
           </Col>
-          <Col className="text-base text-neutralPrimar font-medium">{item.dappName}</Col>
+          <Col className="text-base text-neutralPrimary truncate font-medium w-fit">{item.dappName}</Col>
         </Row>
       ),
     }));
@@ -97,6 +97,7 @@ export default function RankingPage() {
       </div>
 
       <RankingTable
+        pointsColumn={pointsColumns}
         dataSource={rankList}
         loading={loading}
         totalCount={totalCount}
@@ -111,10 +112,7 @@ export default function RankingPage() {
           page && setCurrentPage(page);
           pageSize && setCurrentPageSize(pageSize);
         }}
-        onChange={({ field, order }) => {
-          setFieldOrder(order);
-          setSortField(sortType[field] || sortType.twelveSymbolAmount);
-        }}
+        onChange={onChange}
       />
     </section>
   );

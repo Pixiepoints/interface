@@ -1,28 +1,14 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { Table, Tooltip, Pagination } from 'aelf-design';
-import type { TableColumnsType } from 'antd';
 import { ConfigProvider } from 'antd';
 import { ReactComponent as QuestionIconComp } from 'assets/images/icons/questionCircleOutlined.svg';
 import { EarnAmountCount } from './EarnAmountDynamic';
 import CommonCopy from 'components/CommonCopy';
-import { SorterResult } from 'antd/es/table/interface';
+import { ColumnsType, SorterResult, SortOrder } from 'antd/es/table/interface';
 import { OmittedType, addPrefixSuffix, getOmittedStr } from 'utils/addressFormatting';
-import {
-  SGR_10_TOOL_TIP,
-  SGR_11_TOOL_TIP,
-  SGR_12_TOOL_TIP,
-  SGR_1_TOOL_TIP,
-  SGR_2_TOOL_TIP,
-  SGR_3_TOOL_TIP,
-  SGR_4_TOOL_TIP,
-  SGR_5_TOOL_TIP,
-  SGR_6_TOOL_TIP,
-  SGR_7_TOOL_TIP,
-  SGR_8_TOOL_TIP,
-  SGR_9_TOOL_TIP,
-} from 'constants/index';
 import PointsTitle from './PointsTitle';
 import EarnAmount from './EarnAmount';
+import styles from './style.module.css';
 interface IDappTableProps {
   dataSource: IRankingData[];
   loading: boolean;
@@ -31,6 +17,7 @@ interface IDappTableProps {
     current: number;
     pageSize: number;
   };
+  pointsColumn: Array<any>;
   onClickRow?: (IRankingData) => void;
   onChange?: ({ field, order }: { field?: string; order?: string }) => void;
   onPaginationChange?: ({ page, pageSize }: { page?: number; pageSize?: number }) => void;
@@ -42,162 +29,84 @@ export function RankingTable({
   onChange,
   onClickRow,
   pagination,
+  pointsColumn,
   onPaginationChange,
 }: IDappTableProps) {
-  const columns: TableColumnsType<any> = [
-    {
-      title: 'Ranking',
-      dataIndex: 'rank',
-      key: 'rank',
-      fixed: 'left',
-    },
-    {
-      title: 'Customised Link',
-      dataIndex: 'domain',
-      key: 'domain',
-      render: (text: string) => {
-        return text.length > 25 ? (
-          <Tooltip title={text}>
-            <div className="font-medium flex items-center text-base text-brandDefault text-ellipsis">
+  const columns: ColumnsType<IDappListData> = useMemo(() => {
+    return [
+      {
+        title: 'Ranking',
+        dataIndex: 'rank',
+        key: 'rank',
+        fixed: 'left',
+      } as any,
+      {
+        title: 'Customised Link',
+        dataIndex: 'domain',
+        key: 'domain',
+        render: (text: string) => {
+          return text.length > 25 ? (
+            <Tooltip title={text}>
+              <div className="font-medium flex items-center text-base text-brandDefault text-ellipsis">
+                <a
+                  target="_black"
+                  href={`https://${text}`}
+                  className="text-brandDefault"
+                  onClick={(e) => e.stopPropagation()}>
+                  <span>{text.slice(0, 25)}...</span>{' '}
+                </a>
+                <QuestionIconComp className="w-4 h-4 md:w-0 md:h-0 ml-1 cursor-pointer" width={16} height={16} />
+              </div>
+            </Tooltip>
+          ) : (
+            <div className="font-medium text-base text-brandDefault text-ellipsis">
               <a
                 target="_black"
                 href={`https://${text}`}
                 className="text-brandDefault"
                 onClick={(e) => e.stopPropagation()}>
-                <span>{text.slice(0, 25)}...</span>{' '}
+                <span>{text}</span>
               </a>
-              <QuestionIconComp className="w-4 h-4 md:w-0 md:h-0 ml-1 cursor-pointer" width={16} height={16} />
             </div>
-          </Tooltip>
-        ) : (
-          <div className="font-medium text-base text-brandDefault text-ellipsis">
-            <a
-              target="_black"
-              href={`https://${text}`}
-              className="text-brandDefault"
-              onClick={(e) => e.stopPropagation()}>
-              <span>{text}</span>
-            </a>
-          </div>
-        );
+          );
+        },
       },
-    },
-    {
-      title: 'Wallet Address for Receiving Points',
-      dataIndex: 'address',
-      key: 'address',
-      render: (address: string) => {
-        const fullAddress = addPrefixSuffix(address);
-        const omittedAddress = getOmittedStr(fullAddress, OmittedType.ADDRESS);
-        return (
-          <div className="flex">
-            <span className=" text-neutralPrimary text-base font-medium">{omittedAddress}</span>
-            <CommonCopy type="black" toCopy={fullAddress}></CommonCopy>
-          </div>
-        );
+      {
+        title: 'Wallet Address for Receiving Points',
+        dataIndex: 'address',
+        key: 'address',
+        render: (address: string) => {
+          const fullAddress = addPrefixSuffix(address);
+          const omittedAddress = getOmittedStr(fullAddress, OmittedType.ADDRESS);
+          return (
+            <div className="flex">
+              <span className=" text-neutralPrimary text-base font-medium">{omittedAddress}</span>
+              <CommonCopy type="black" toCopy={fullAddress}></CommonCopy>
+            </div>
+          );
+        },
       },
-    },
-    {
-      title: <PointsTitle tip={SGR_12_TOOL_TIP} title="XPSGR-12" />,
-      dataIndex: 'twelveSymbolAmount',
-      key: 'twelveSymbolAmount',
-      sorter: true,
-      sortDirections: ['descend', 'ascend', 'descend'],
-      defaultSortOrder: 'descend',
-      render: (amount) => <EarnAmount amount={amount} />,
-    },
-    {
-      title: <PointsTitle tip={SGR_11_TOOL_TIP} title="XPSGR-11" />,
-      dataIndex: 'elevenSymbolAmount',
-      key: 'elevenSymbolAmount',
-      sorter: true,
-      sortDirections: ['descend', 'ascend', 'descend'],
-      render: (amount) => <EarnAmount amount={amount} />,
-    },
-    {
-      title: <PointsTitle tip={SGR_10_TOOL_TIP} title="XPSGR-10" />,
-      dataIndex: 'tenSymbolAmount',
-      key: 'tenSymbolAmount',
-      sorter: true,
-      sortDirections: ['descend', 'ascend', 'descend'],
-      render: (amount) => <EarnAmount amount={amount} />,
-    },
-    {
-      title: <PointsTitle tip={SGR_9_TOOL_TIP} title="XPSGR-9" />,
-      dataIndex: 'nineSymbolAmount',
-      key: 'nineSymbolAmount',
-      sorter: true,
-      sortDirections: ['descend', 'ascend', 'descend'],
-      render: (amount) => <EarnAmount amount={amount} />,
-    },
-    {
-      title: <PointsTitle tip={SGR_8_TOOL_TIP} title="XPSGR-8" />,
-      dataIndex: 'eightSymbolAmount',
-      key: 'eightSymbolAmount',
-      sorter: true,
-      sortDirections: ['descend', 'ascend', 'descend'],
-      render: (amount) => <EarnAmount amount={amount} />,
-    },
-    {
-      title: <PointsTitle tip={SGR_7_TOOL_TIP} title="XPSGR-7" />,
-      dataIndex: 'sevenSymbolAmount',
-      key: 'sevenSymbolAmount',
-      sorter: true,
-      sortDirections: ['descend', 'ascend', 'descend'],
-      render: (amount) => <EarnAmount amount={amount} />,
-    },
-    {
-      title: <PointsTitle tip={SGR_6_TOOL_TIP} title="XPSGR-6" />,
-      dataIndex: 'sixSymbolAmount',
-      key: 'sixSymbolAmount',
-      sorter: true,
-      sortDirections: ['descend', 'ascend', 'descend'],
-      render: (amount) => <EarnAmount amount={amount} />,
-    },
-    {
-      title: <PointsTitle tip={SGR_5_TOOL_TIP} title="XPSGR-5" />,
-      dataIndex: 'fiveSymbolAmount',
-      key: 'fiveSymbolAmount',
-      sorter: true,
-      sortDirections: ['descend', 'ascend', 'descend'],
-      render: (amount) => <EarnAmount amount={amount} />,
-    },
-    {
-      title: <PointsTitle tip={SGR_4_TOOL_TIP} title="XPSGR-4" />,
-      dataIndex: 'fourSymbolAmount',
-      key: 'fourSymbolAmount',
-      sorter: true,
-      sortDirections: ['descend', 'ascend', 'descend'],
-      render: (amount) => <EarnAmount amount={amount} />,
-    },
-    {
-      title: <PointsTitle tip={SGR_3_TOOL_TIP} title="XPSGR-3" />,
-      dataIndex: 'thirdSymbolAmount',
-      key: 'thirdSymbolAmount',
-      sorter: true,
-      sortDirections: ['descend', 'ascend', 'descend'],
-      render: (amount) => <EarnAmount amount={amount} />,
-    },
-    {
-      title: <PointsTitle tip={SGR_2_TOOL_TIP} title="XPSGR-2" />,
-      dataIndex: 'secondSymbolAmount',
-      key: 'secondSymbolAmount',
-      sorter: true,
-      sortDirections: ['descend', 'ascend', 'descend'],
-      width: 180,
-      render: (_, item) => {
-        return <EarnAmountCount {...item} amount={item.secondSymbolAmount} className="text-base" />;
-      },
-    },
-    {
-      title: <PointsTitle tip={SGR_1_TOOL_TIP} title="XPSGR-1" />,
-      dataIndex: 'firstSymbolAmount',
-      key: 'firstSymbolAmount',
-      sorter: true,
-      sortDirections: ['descend', 'ascend', 'descend'],
-      render: (amount) => <EarnAmount amount={amount} />,
-    },
-  ];
+    ].concat(
+      pointsColumn?.map((item) => {
+        return {
+          title: <PointsTitle tip={item?.tipText} title={item?.title} />,
+          dataIndex: item?.dataIndex,
+          key: item?.dataIndex,
+          sorter: true,
+          width: item?.supportsSelfIncrease ? 180 : undefined,
+          sortDirections: ['descend', 'ascend', 'descend'] as SortOrder[],
+          defaultSortOrder: (item?.defaultSortOrder || undefined) as SortOrder,
+          render: (amount, data) => {
+            return item?.supportsSelfIncrease ? (
+              <EarnAmountCount {...data} amount={amount} className="text-base" />
+            ) : (
+              <EarnAmount amount={amount} />
+            );
+          },
+        } as any;
+      }) || [],
+    );
+  }, [pointsColumn]);
 
   return (
     <div className="mt-6">
@@ -206,6 +115,7 @@ export function RankingTable({
           <p className=" font-medium text-base text-neutralSecondary py-10 md:py-40"> No search results</p>
         )}>
         <Table
+          className={styles.rankingTable}
           rowKey="domain"
           dataSource={dataSource}
           columns={columns}

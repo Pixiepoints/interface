@@ -36,7 +36,7 @@ export default function CommonSelect({
         {...props}
         suffixIcon={<DownOutlined />}
         className={clsx(
-          'text-lg text-neutralTitle font-semibol rounded-sm border-neutralBorder md:h-[64px] h-[48px] max-w-[360px] w-[100%]',
+          'text-lg text-neutralTitle font-semibold rounded-sm border-neutralBorder md:h-[64px] h-[48px] max-w-[360px] w-[100%]',
           selectClassName,
         )}
       />

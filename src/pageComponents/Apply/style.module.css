@@ -5,3 +5,14 @@
 .mobile-apply {
   @apply !block !pt-[40px] !px-[16px] !pb-[16px];
 }
+
+.ruleList {
+  li {
+    @apply flex items-start;
+    &::before {
+      content: '·';
+      width: 20px;
+      flex-shrink: 0;
+    }
+  }
+}

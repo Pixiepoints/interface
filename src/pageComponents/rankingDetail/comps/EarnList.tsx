@@ -43,7 +43,8 @@ function PointListItem({ action, displayName, symbol, amount, ...props }: IPoint
 }
 
 export function TokenEarnList({ dataSource }: ITokenEarnListProps) {
-  if (!dataSource?.length) return null;
+  if (!dataSource?.length)
+    return <div className="py-10 text-center text-base text-neutralSecondary">No points obtained</div>;
   return (
     <div>
       {dataSource.map((pointDetail) => (

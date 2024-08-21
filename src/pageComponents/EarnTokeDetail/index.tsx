@@ -9,6 +9,8 @@ import { Breadcrumb } from 'antd';
 import { useCheckLoginAndToken } from 'hooks/useWallet';
 import request from 'api/axios';
 import { useTimeoutFn } from 'react-use';
+import useLoading from 'hooks/useLoading';
+import { useEffect } from 'react';
 
 export default function EarnTokenDetail() {
   const params = useParams() as unknown as {
@@ -19,8 +21,9 @@ export default function EarnTokenDetail() {
   const walletInfo = useSelector(getWalletInfo);
   const { isOK } = useCheckLoginAndToken();
   const navigation = useRouter();
+  const { showLoading, closeLoading } = useLoading();
 
-  const { value } = useAsync(async () => {
+  const { value, loading } = useAsync(async () => {
     if (!walletInfo.address) {
       return undefined;
     }
@@ -30,6 +33,14 @@ export default function EarnTokenDetail() {
     });
     return response;
   }, [params, walletInfo.address]);
+
+  useEffect(() => {
+    if (loading) {
+      showLoading();
+    } else {
+      closeLoading();
+    }
+  }, [closeLoading, loading, showLoading]);
 
   useTimeoutFn(() => {
     if (!isOK) {

@@ -30,14 +30,26 @@ interface IDAppListParams {
   categories?: Array<string>; //not required
 }
 
+interface IRankingColumnItem {
+  dataIndex: string;
+  sortingKeyWord: string;
+  label: string;
+  defaultSortOrder: string;
+  tipText: string;
+  supportsSelfIncrease: boolean;
+}
+
 interface IDappListData {
   dappName: string;
   dappId: string;
   icon: string;
   category: string;
   link: string;
+  firstLevelDomain: string;
   secondLevelDomain: string;
   supportsApply: boolean;
+  pointsRule: Array<string>;
+  rankingColumns: Array<IRankingColumnItem>;
 }
 
 interface IRankingParams {
