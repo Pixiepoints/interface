@@ -39,6 +39,10 @@ const WebLoginProviderDynamic = dynamic(
           baseURL: serverV2 || '',
         },
         serviceUrl: serverV2,
+        referralInfo: {
+          referralCode: '',
+          projectCode: '13023',
+        },
       },
       aelfReact: {
         appName: APP_NAME,
