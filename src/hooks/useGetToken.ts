@@ -11,6 +11,10 @@ import { setHasToken } from 'redux/reducer/info';
 
 const AElf = require('aelf-sdk');
 
+const hexDataCopywriter = `Welcome to PixiePoints! Click to connect wallet to and accept its Terms of Service and Privacy Policy. This request will not trigger a blockchain transaction or cost any gas fees.
+
+signature: `;
+
 export const useGetToken = () => {
   const {
     loginState,
@@ -65,8 +69,10 @@ export const useGetToken = () => {
       localStorage.removeItem(storages.accountInfo);
     }
     const timestamp = Date.now();
-
-    const signInfo = AElf.utils.sha256(`${wallet.address}-${timestamp}`);
+    const signStr = `${wallet?.address}-${timestamp}`;
+    const hexDataStr = hexDataCopywriter + signStr;
+    const signInfo = AElf.utils.sha256(signStr);
+    const hexData = Buffer.from(hexDataStr).toString('hex');
 
     let publicKey = '';
     let signature = '';
@@ -74,7 +80,7 @@ export const useGetToken = () => {
 
     if (walletType === WalletType.discover) {
       try {
-        const { pubKey, signatureStr } = await getSignatureAndPublicKey(signInfo);
+        const { pubKey, signatureStr } = await getSignatureAndPublicKey(signInfo, hexData);
         publicKey = pubKey || '';
         signature = signatureStr || '';
         source = 'portkey';
@@ -86,8 +92,7 @@ export const useGetToken = () => {
       const sign = await getSignature({
         appName: appName,
         address: wallet.address,
-        signInfo:
-          walletType === WalletType.portkey ? Buffer.from(`${wallet.address}-${timestamp}`).toString('hex') : signInfo,
+        signInfo: walletType === WalletType.portkey ? Buffer.from(signStr).toString('hex') : signInfo,
       });
       if (sign?.errorMessage) {
         message.error(sign.errorMessage);
