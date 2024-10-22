@@ -20,6 +20,7 @@ export const columns: (params?: {
       width: 220,
       key: 'dappName',
       dataIndex: 'dappName',
+      fixed: 'left' as any,
       render: (dappName: string, record: IEarnToken) => (
         <Row gutter={[24, 0]} align="middle">
           <Col>
@@ -36,6 +37,7 @@ export const columns: (params?: {
       width: 280,
       key: 'domain',
       dataIndex: 'domain',
+      fixed: 'left' as any,
       render: (domain: string, record: IEarnToken) => (
         <span className="flex items-center" onClick={(e) => e.stopPropagation()}>
           <a target="_black" href={`https://${domain}`} className="ml-2">
@@ -60,6 +62,7 @@ export const columns: (params?: {
       width: 150,
       key: 'role',
       dataIndex: 'role',
+      fixed: 'left' as any,
       render: (role: number) => <span className="text-neutralPrimar text-base font-medium">{RoleTypeName[role]}</span>,
     },
   ].concat(

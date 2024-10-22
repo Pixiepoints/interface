@@ -44,6 +44,7 @@ export function RankingTable({
         title: 'Customised Link',
         dataIndex: 'domain',
         key: 'domain',
+        fixed: 'left',
         render: (text: string) => {
           return text.length > 25 ? (
             <Tooltip title={text}>
@@ -75,6 +76,7 @@ export function RankingTable({
         title: 'Wallet Address for Receiving Points',
         dataIndex: 'address',
         key: 'address',
+        fixed: 'left',
         render: (address: string) => {
           const fullAddress = addPrefixSuffix(address);
           const omittedAddress = getOmittedStr(fullAddress, OmittedType.ADDRESS);
