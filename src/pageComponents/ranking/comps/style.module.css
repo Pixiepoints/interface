@@ -8,3 +8,12 @@
     }
   }
 }
+
+.pagination {
+  :global {
+    .aelfd-page-container > :first-child,
+    .aelfd-page-container > :last-child {
+      @apply !hidden;
+    }
+  }
+}

@@ -31,6 +31,11 @@ export function useRankingService() {
     );
   }, [selectValue?.rankingColumns]);
 
+  const totalCount = useMemo(() => {
+    const total = data?.totalCount || 0;
+    return total > 10000 ? 10000 : total;
+  }, [data?.totalCount]);
+
   const onSearch = useCallback(() => {
     const pageNumber = currentPageSize;
     const sortOption = !fieldOrder
@@ -119,7 +124,7 @@ export function useRankingService() {
   return {
     dappList,
     rankList,
-    totalCount: data?.totalCount,
+    totalCount,
     loading,
     setKeyWord: onKeywordUpdate,
     dappName,
