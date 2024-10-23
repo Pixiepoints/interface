@@ -17,6 +17,7 @@ import { useRequest, useTimeout } from 'ahooks';
 import { fetchEarnTokenList } from 'api/rankingApi';
 import { useWebLogin } from 'aelf-web-login';
 import SkeletonImage from 'components/SkeletonImage';
+import useResponsive from 'hooks/useResponsive';
 
 export default function EarnTokenList() {
   const [dappName, setDappName] = useState<string>('');
@@ -33,6 +34,7 @@ export default function EarnTokenList() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const pathName = usePathname();
+  const { isLG } = useResponsive();
 
   const selectValue = useMemo(() => {
     return dappList?.filter((item) => item?.dappId === dappName)?.[0];
@@ -210,7 +212,7 @@ export default function EarnTokenList() {
         </Col>
         <Col span={24}>
           <Table
-            columns={columns({ showShareModal, pointsColumns })}
+            columns={columns({ showShareModal, pointsColumns, isMobile: isLG })}
             scroll={{
               x: 'max-content',
             }}

@@ -9,6 +9,7 @@ import { OmittedType, addPrefixSuffix, getOmittedStr } from 'utils/addressFormat
 import PointsTitle from './PointsTitle';
 import EarnAmount from './EarnAmount';
 import styles from './style.module.css';
+import useResponsive from 'hooks/useResponsive';
 interface IDappTableProps {
   dataSource: IRankingData[];
   loading: boolean;
@@ -32,6 +33,7 @@ export function RankingTable({
   pointsColumn,
   onPaginationChange,
 }: IDappTableProps) {
+  const { isLG } = useResponsive();
   const columns: ColumnsType<IDappListData> = useMemo(() => {
     return [
       {
@@ -44,7 +46,7 @@ export function RankingTable({
         title: 'Customised Link',
         dataIndex: 'domain',
         key: 'domain',
-        fixed: 'left',
+        fixed: isLG ? false : 'left',
         render: (text: string) => {
           return text.length > 25 ? (
             <Tooltip title={text}>
@@ -76,7 +78,7 @@ export function RankingTable({
         title: 'Wallet Address for Receiving Points',
         dataIndex: 'address',
         key: 'address',
-        fixed: 'left',
+        fixed: isLG ? false : 'left',
         render: (address: string) => {
           const fullAddress = addPrefixSuffix(address);
           const omittedAddress = getOmittedStr(fullAddress, OmittedType.ADDRESS);
@@ -108,7 +110,7 @@ export function RankingTable({
         } as any;
       }) || [],
     );
-  }, [pointsColumn]);
+  }, [isLG, pointsColumn]);
 
   return (
     <div className="mt-6">

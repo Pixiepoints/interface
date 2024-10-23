@@ -5,9 +5,8 @@
   "scripts": {
     "dev": "NEXT_PUBLIC_APP_ENV=test next dev",
     "dev:test": "NEXT_PUBLIC_APP_ENV=test next dev",
-    "build:dev": "NEXT_PUBLIC_APP_ENV=development next build",
     "build:test": "NEXT_PUBLIC_APP_ENV=test next build",
-    "build": "NEXT_PUBLIC_APP_ENV=production next build",
+    "build:production": "NEXT_PUBLIC_APP_ENV=production next build",
     "start": "next start",
     "lint": "next lint",
     "prettier": "prettier -c --write '**/*'",
