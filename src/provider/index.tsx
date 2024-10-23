@@ -11,6 +11,7 @@ import { fetchConfigItems } from 'api/request';
 import { message } from 'antd';
 import { store } from 'redux/store';
 import { setConfig } from 'redux/reducer/info';
+import Updater from 'components/Updater';
 
 function Provider({ children }: { children: React.ReactNode }) {
   const [loading, setLoading] = useState(true);
@@ -36,6 +37,7 @@ function Provider({ children }: { children: React.ReactNode }) {
             <Loading></Loading>
           ) : (
             <WebLoginProvider>
+              <Updater />
               <NiceModal.Provider>{children}</NiceModal.Provider>
             </WebLoginProvider>
           )}

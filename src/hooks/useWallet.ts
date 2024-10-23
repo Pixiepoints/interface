@@ -11,7 +11,7 @@ import {
   PortkeyInfo,
 } from 'aelf-web-login';
 import { message } from 'antd';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useGetToken } from './useGetToken';
 import { getOriginalAddress } from 'utils/addressFormatting';
 import { dispatch, store } from 'redux/store';
@@ -28,6 +28,8 @@ import { MethodsWallet } from '@portkey/provider-types';
 import { getConfig, setHasToken, setItemsFromLocal } from 'redux/reducer/info';
 import useGetStoreInfo from 'redux/hooks/useGetStoreInfo';
 import { mainChain } from 'constants/index';
+import useGetLoginStatus from 'redux/hooks/useGetLoginStatus';
+import { resetLoginStatus, setLoginStatus } from 'redux/reducer/loginStatus';
 
 export const useWalletInit = () => {
   const [, setLocalWalletInfo] = useLocalStorage<WalletInfoType>(storages.walletInfo);
@@ -89,6 +91,7 @@ export const useWalletInit = () => {
     );
     dispatch(setItemsFromLocal([]));
     dispatch(setHasToken(false));
+    dispatch(resetLoginStatus());
   }, [backToHomeByRoute]);
 
   useWebLoginEvent(WebLoginEvents.LOGIN_ERROR, (error) => {
@@ -113,8 +116,8 @@ export const useWalletInit = () => {
 
 export const useWalletService = () => {
   const { login, logout, loginState, walletType, wallet } = useWebLogin();
+  const { isLogin } = useGetLoginStatus();
   const { lock } = usePortkeyLock();
-  const isLogin = loginState === WebLoginState.logined;
   return { login, logout, isLogin, walletType, lock, wallet };
 };
 
@@ -228,34 +231,62 @@ export const useWalletSyncCompleted = (contractChainId: ChainId = mainChain) => 
 };
 
 export const useCheckLoginAndToken = () => {
-  const { loginState, login } = useWebLogin();
-  const isLogin = loginState === WebLoginState.logined;
-  const { getToken } = useGetToken();
-  const { hasToken } = useGetStoreInfo();
+  const { loginState, login, wallet, logout } = useWebLogin();
+  const { getToken, checkTokenValid } = useGetToken();
+  const success = useRef<<T = any>() => T | void>();
+  const { isLogin } = useGetLoginStatus();
 
-  const checkLogin = async () => {
+  const isConnectWallet = useMemo(() => {
+    return loginState === WebLoginState.logined;
+  }, [loginState]);
+
+  const checkLogin = async (params?: { onSuccess?: <T = any>() => T | void }) => {
+    const { onSuccess } = params || {};
     const accountInfo = JSON.parse(localStorage.getItem(storages.accountInfo) || '{}');
-    if (isLogin) {
-      if (accountInfo.token) {
-        store.dispatch(setHasToken(true));
+    if (isConnectWallet && wallet) {
+      if (accountInfo.token && checkTokenValid()) {
+        store.dispatch(
+          setLoginStatus({
+            hasToken: true,
+            isLogin: true,
+          }),
+        );
         return;
       }
-      getToken();
+      await getToken({
+        needLoading: true,
+      });
+      onSuccess && onSuccess();
+      return;
     }
+    success.current = onSuccess;
     login();
   };
 
   useEffect(() => {
+    if (isLogin) {
+      success.current && success.current();
+      success.current = undefined;
+    }
+  }, [isLogin]);
+
+  useEffect(() => {
     const accountInfo = JSON.parse(localStorage.getItem(storages.accountInfo) || '{}');
     if (accountInfo.token) {
-      store.dispatch(setHasToken(true));
+      store.dispatch(
+        setLoginStatus({
+          hasToken: true,
+        }),
+      );
       return;
     }
   }, []);
 
   return {
-    isOK: isLogin && !!hasToken,
+    checkTokenValid,
     checkLogin,
+    logout,
+    isOK: isLogin,
   };
 };
 
