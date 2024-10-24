@@ -10,6 +10,7 @@ import PointsTitle from './PointsTitle';
 import EarnAmount from './EarnAmount';
 import styles from './style.module.css';
 import useResponsive from 'hooks/useResponsive';
+import clsx from 'clsx';
 interface IDappTableProps {
   dataSource: IRankingData[];
   loading: boolean;
@@ -144,7 +145,7 @@ export function RankingTable({
             x: 'max-content',
           }}></Table>
       </ConfigProvider>
-      <div className="py-[22px]">
+      <div className={clsx('py-[22px]', styles.pagination)}>
         <Pagination
           hideOnSinglePage={true}
           {...pagination}

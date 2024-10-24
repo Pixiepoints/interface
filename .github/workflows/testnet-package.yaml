@@ -21,7 +21,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ${{ secrets.REPOSITORY_REGION }}-docker.pkg.dev/${{ secrets.PROJECT_ID }}/${{ secrets.REPOSITORY }}/interface # change this to your project frontend name​
+          images: ${{ secrets.REPOSITORY_REGION }}-docker.pkg.dev/${{ secrets.PROJECT_ID }}/${{ secrets.REPOSITORY }}/pixiepoints-interface # change this to your project frontend name
           tags: |
             type=sha
       - name: Set up Docker Buildx
@@ -40,22 +40,22 @@ jobs:
             NODE_ENV=test
             NEXT_PUBLIC_APP_ENV=test
             BUILD_ENV=test
-  # dispatch:
-  #   runs-on: pixiepoints-runner
-  #   needs: build-and-push-image
-  #   steps:
-  #     - name: Deploy
-  #       uses: actions/github-script@v6
-  #       with:
-  #         github-token: ${{ secrets.TOK }}
-  #         script: |
-  #           await github.rest.actions.createWorkflowDispatch({
-  #             owner: 'EcoEarn',
-  #             repo: 'devops',
-  #             workflow_id: 'deployment_testnet.yaml',
-  #             ref: 'main',
-  #             inputs: {
-  #               appName: 'interface',
-  #               commit_sha: 'sha-${{ needs.build-and-push-image.outputs.short_sha }}',
-  #             }
-  #           })
+  dispatch:
+    runs-on: pixiepoints-runner
+    needs: build-and-push-image
+    steps:
+      - name: Deploy
+        uses: actions/github-script@v6
+        with:
+          github-token: ${{ secrets.TOK }}
+          script: |
+            await github.rest.actions.createWorkflowDispatch({
+              owner: 'Pixiepoints',
+              repo: 'devops',
+              workflow_id: 'deployment_testnet.yaml',
+              ref: 'main',
+              inputs: {
+                appName: 'pixiepoints-interface',
+                commit_sha: 'sha-${{ needs.build-and-push-image.outputs.short_sha }}',
+              }
+            })

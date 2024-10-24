@@ -183,6 +183,11 @@ export default function EarnTokenList() {
     }
   }, 1000);
 
+  const totalCount = useMemo(() => {
+    const total = tokenList?.totalCount || 0;
+    return total > 10000 ? 10000 : total;
+  }, [tokenList?.totalCount]);
+
   return (
     <div
       className={`max-w-[1440px] w-[100%] mx-auto pt-[32px] pb-[60px] px-[16px] md:pt-[48px] md:px-[40px]  ${styles['earn-token-list']}`}>
@@ -239,7 +244,7 @@ export default function EarnTokenList() {
                 pageSize={pageSize}
                 current={pageNum}
                 showSizeChanger
-                total={tokenList?.totalCount ?? 0}
+                total={totalCount}
                 pageChange={(page, pageSize) => handleTableChange({ page, pageSize }, null, null)}
                 pageSizeChange={(page, pageSize) => handleTableChange({ page, pageSize }, null, null)}
               />
