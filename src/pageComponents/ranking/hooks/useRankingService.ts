@@ -1,6 +1,6 @@
 import { useRequest } from 'ahooks';
 import { fetchRankingList } from 'api/rankingApi';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import useGetDappList from 'hooks/useGetDappList';
 import { decodeAddress, getOriginalAddress } from 'utils/addressFormatting';
 
@@ -13,11 +13,11 @@ export function useRankingService() {
   const dappList = useGetDappList({ dappName: '' });
 
   const [dappName, setDappName] = useState<string>('');
-  const [keyword, setKeyWord] = useState<string>('');
   const [currentPageSize, setCurrentPageSize] = useState<number>(10);
   const [currentPage, setCurrentPage] = useState<number>(1);
   const [sortField, setSortField] = useState<string>();
   const [fieldOrder, setFieldOrder] = useState<string>();
+  const keyWorld = useRef<string>('');
 
   const selectValue = useMemo(() => {
     return dappList?.filter((item) => item?.dappId === dappName)?.[0];
@@ -31,6 +31,11 @@ export function useRankingService() {
     );
   }, [selectValue?.rankingColumns]);
 
+  const totalCount = useMemo(() => {
+    const total = data?.totalCount || 0;
+    return total > 10000 ? 10000 : total;
+  }, [data?.totalCount]);
+
   const onSearch = useCallback(() => {
     const pageNumber = currentPageSize;
     const sortOption = !fieldOrder
@@ -40,7 +45,7 @@ export function useRankingService() {
       skipCount: (currentPage - 1) * pageNumber,
       maxResultCount: pageNumber,
     };
-    const searchOpt = { dappName, keyword };
+    const searchOpt = { dappName, keyword: keyWorld.current };
     if (!searchOpt.dappName) return;
     const params = Object.assign({}, sortOption, pagination, searchOpt);
     if (!params.keyword) delete params.keyword;
@@ -48,14 +53,25 @@ export function useRankingService() {
       if (decodeAddress(params.keyword)) {
         params.keyword = getOriginalAddress(params.keyword);
       }
-      params.skipCount = 0;
     }
     run(params);
-  }, [currentPage, currentPageSize, dappName, defaultSortField, fieldOrder, keyword, run, sortField]);
+  }, [currentPage, currentPageSize, dappName, defaultSortField, fieldOrder, run, sortField]);
 
-  const onRefresh = () => {
+  const onRefresh = useCallback(() => {
     onSearch();
-  };
+  }, [onSearch]);
+
+  const onKeywordUpdate = useCallback(
+    (value: string) => {
+      keyWorld.current = value;
+      if (currentPage === 1) {
+        onRefresh();
+      } else {
+        setCurrentPage(1);
+      }
+    },
+    [currentPage, onRefresh],
+  );
 
   useEffect(() => {
     onSearch();
@@ -108,9 +124,9 @@ export function useRankingService() {
   return {
     dappList,
     rankList,
-    totalCount: data?.totalCount,
+    totalCount,
     loading,
-    setKeyWord,
+    setKeyWord: onKeywordUpdate,
     dappName,
     setDappName,
     onSearch,

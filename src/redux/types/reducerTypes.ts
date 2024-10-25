@@ -5,3 +5,13 @@ export type InfoStateType = {
   itemsFromLocal?: string[];
   hasToken?: boolean;
 };
+
+export type TLoginStatusType = {
+  loginStatus: {
+    isConnectWallet: boolean;
+    hasToken: boolean;
+    isLogin: boolean;
+    isLoadingToken: boolean;
+    isLoadingConnectWallet: boolean;
+  };
+};

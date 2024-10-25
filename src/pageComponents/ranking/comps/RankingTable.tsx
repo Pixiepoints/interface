@@ -9,6 +9,8 @@ import { OmittedType, addPrefixSuffix, getOmittedStr } from 'utils/addressFormat
 import PointsTitle from './PointsTitle';
 import EarnAmount from './EarnAmount';
 import styles from './style.module.css';
+import useResponsive from 'hooks/useResponsive';
+import clsx from 'clsx';
 interface IDappTableProps {
   dataSource: IRankingData[];
   loading: boolean;
@@ -32,6 +34,7 @@ export function RankingTable({
   pointsColumn,
   onPaginationChange,
 }: IDappTableProps) {
+  const { isLG } = useResponsive();
   const columns: ColumnsType<IDappListData> = useMemo(() => {
     return [
       {
@@ -44,6 +47,7 @@ export function RankingTable({
         title: 'Customised Link',
         dataIndex: 'domain',
         key: 'domain',
+        fixed: isLG ? false : 'left',
         render: (text: string) => {
           return text.length > 25 ? (
             <Tooltip title={text}>
@@ -75,6 +79,7 @@ export function RankingTable({
         title: 'Wallet Address for Receiving Points',
         dataIndex: 'address',
         key: 'address',
+        fixed: isLG ? false : 'left',
         render: (address: string) => {
           const fullAddress = addPrefixSuffix(address);
           const omittedAddress = getOmittedStr(fullAddress, OmittedType.ADDRESS);
@@ -106,7 +111,7 @@ export function RankingTable({
         } as any;
       }) || [],
     );
-  }, [pointsColumn]);
+  }, [isLG, pointsColumn]);
 
   return (
     <div className="mt-6">
@@ -140,7 +145,7 @@ export function RankingTable({
             x: 'max-content',
           }}></Table>
       </ConfigProvider>
-      <div className="py-[22px]">
+      <div className={clsx('py-[22px]', styles.pagination)}>
         <Pagination
           hideOnSinglePage={true}
           {...pagination}

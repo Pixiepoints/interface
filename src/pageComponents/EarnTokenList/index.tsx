@@ -17,6 +17,7 @@ import { useRequest, useTimeout } from 'ahooks';
 import { fetchEarnTokenList } from 'api/rankingApi';
 import { useWebLogin } from 'aelf-web-login';
 import SkeletonImage from 'components/SkeletonImage';
+import useResponsive from 'hooks/useResponsive';
 
 export default function EarnTokenList() {
   const [dappName, setDappName] = useState<string>('');
@@ -33,6 +34,7 @@ export default function EarnTokenList() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const pathName = usePathname();
+  const { isLG } = useResponsive();
 
   const selectValue = useMemo(() => {
     return dappList?.filter((item) => item?.dappId === dappName)?.[0];
@@ -181,6 +183,11 @@ export default function EarnTokenList() {
     }
   }, 1000);
 
+  const totalCount = useMemo(() => {
+    const total = tokenList?.totalCount || 0;
+    return total > 10000 ? 10000 : total;
+  }, [tokenList?.totalCount]);
+
   return (
     <div
       className={`max-w-[1440px] w-[100%] mx-auto pt-[32px] pb-[60px] px-[16px] md:pt-[48px] md:px-[40px]  ${styles['earn-token-list']}`}>
@@ -210,7 +217,7 @@ export default function EarnTokenList() {
         </Col>
         <Col span={24}>
           <Table
-            columns={columns({ showShareModal, pointsColumns })}
+            columns={columns({ showShareModal, pointsColumns, isMobile: isLG })}
             scroll={{
               x: 'max-content',
             }}
@@ -237,7 +244,7 @@ export default function EarnTokenList() {
                 pageSize={pageSize}
                 current={pageNum}
                 showSizeChanger
-                total={tokenList?.totalCount ?? 0}
+                total={totalCount}
                 pageChange={(page, pageSize) => handleTableChange({ page, pageSize }, null, null)}
                 pageSizeChange={(page, pageSize) => handleTableChange({ page, pageSize }, null, null)}
               />
