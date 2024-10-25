@@ -13,13 +13,15 @@ import EarnAmount from 'pageComponents/ranking/comps/EarnAmount';
 export const columns: (params?: {
   showShareModal?: (data: IEarnToken) => void;
   pointsColumns: Array<any>;
-}) => ColumnsType<IEarnToken> = ({ showShareModal, pointsColumns }) => {
+  isMobile: boolean;
+}) => ColumnsType<IEarnToken> = ({ showShareModal, pointsColumns, isMobile }) => {
   return [
     {
       title: 'dApp',
       width: 220,
       key: 'dappName',
       dataIndex: 'dappName',
+      fixed: (isMobile ? false : 'left') as any,
       render: (dappName: string, record: IEarnToken) => (
         <Row gutter={[24, 0]} align="middle">
           <Col>
@@ -36,6 +38,7 @@ export const columns: (params?: {
       width: 280,
       key: 'domain',
       dataIndex: 'domain',
+      fixed: (isMobile ? false : 'left') as any,
       render: (domain: string, record: IEarnToken) => (
         <span className="flex items-center" onClick={(e) => e.stopPropagation()}>
           <a target="_black" href={`https://${domain}`} className="ml-2">
@@ -60,6 +63,7 @@ export const columns: (params?: {
       width: 150,
       key: 'role',
       dataIndex: 'role',
+      fixed: (isMobile ? false : 'left') as any,
       render: (role: number) => <span className="text-neutralPrimar text-base font-medium">{RoleTypeName[role]}</span>,
     },
   ].concat(
