@@ -1,13 +1,15 @@
-FROM node:16.16.0
+FROM node:18.18.0
 
-ARG web=/opt/workspace/aelf-example
+ARG web=/opt/workspace/dapp
+ARG NEXT_PUBLIC_APP_ENV
+ARG BUILD_ENV
+ENV NEXT_PUBLIC_APP_ENV=${NEXT_PUBLIC_APP_ENV}
 
 WORKDIR ${web}
 
 COPY . ${web}
 
-RUN yarn \
-    && yarn build
+RUN yarn && yarn build:${BUILD_ENV}
 
 ENTRYPOINT yarn start
 
