@@ -5,7 +5,7 @@ on:
       - 'v*.*.*'
 jobs:
   build-and-push-image:
-    runs-on: ecoearn-runner
+    runs-on: pixiepoints-runner
     permissions:
       contents: read
     steps:
@@ -15,7 +15,7 @@ jobs:
         id: meta
         uses: docker/metadata-action@v5
         with:
-          images: ${{ secrets.REPOSITORY_REGION }}-docker.pkg.dev/${{ secrets.PROJECT_ID }}/${{ secrets.REPOSITORY }}/ecoearn-interface # change this to your project frontend name
+          images: ${{ secrets.REPOSITORY_REGION }}-docker.pkg.dev/${{ secrets.PROJECT_ID }}/${{ secrets.REPOSITORY }}/pixiepoints-interface # change this to your project frontend name
           tags: |
             type=ref,event=tag
       - name: Set up Docker Buildx
