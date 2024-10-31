@@ -158,7 +158,7 @@ function FormCard({ className, dappName, dappId, image, suffix }: IProps) {
             ...value,
             [type]: {
               warning:
-                'The address you entered is a MainChain address, and it has been automatically corrected to the corresponding SideChain address. Points will be sent to the SideChain address.',
+                'The address you entered is a MainChain address, and it has been automatically corrected to the corresponding dAppChain address. Points will be sent to the dAppChain address.',
               error: undefined,
             },
           };
@@ -184,7 +184,7 @@ function FormCard({ className, dappName, dappId, image, suffix }: IProps) {
           ...value,
           [type]: {
             warning: undefined,
-            error: 'Please enter a SideChain address on aelf.',
+            error: 'Please enter a dAppChain address on aelf.',
           },
         };
       });
@@ -435,7 +435,7 @@ function FormCard({ className, dappName, dappId, image, suffix }: IProps) {
           <Form.Item
             label={renderLabel(
               'Referrer',
-              'Referrer is the address who invites you to register the customised link. You have the option to enter any address, including your current login account. Referrer will earn points from activities conducted through this customised link. Recommended address type: SideChain address created using Portkey.',
+              'Referrer is the address who invites you to register the customised link. You have the option to enter any address, including your current login account. Referrer will earn points from activities conducted through this customised link. Recommended address type: dAppChain address created using Portkey.',
             )}
             className="mb-[24px] md:mb-[40px]">
             {renderInviteInput}
@@ -444,7 +444,7 @@ function FormCard({ className, dappName, dappId, image, suffix }: IProps) {
           <Form.Item
             label={renderLabel(
               'Wallet Address for Receiving Points',
-              'All the points earned for the advocate will be sent to this address. Recommended address type: SideChain address created using Portkey.',
+              'All the points earned for the advocate will be sent to this address. Recommended address type: dAppChain address created using Portkey.',
             )}
             className="mb-[24px] md:mb-[40px]">
             <Input
